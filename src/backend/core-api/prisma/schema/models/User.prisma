@@ -1,0 +1,15 @@
+model User {
+  user_id       String   @id @default(cuid())
+  username      String   @unique
+  email         String   @unique
+  password_hash String
+  rating        Int      @default(1500)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  submissions Submission[]
+  standings   ContestStanding[]
+
+  createdContests Contest[] @relation("CreatedContests")
+  createdProblems Problem[] @relation("CreatedProblems")
+}

@@ -1,0 +1,9 @@
+model ProblemSample {
+  sample_id     String  @id @default(cuid())
+  problem_id    String
+  input_sample  String
+  output_sample String
+  explanation   String?
+
+  problem Problem @relation(fields: [problem_id], references: [problem_id])
+}

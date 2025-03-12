@@ -1,0 +1,10 @@
+model ContestProblem {
+  contest_id    String
+  problem_id    String
+  problem_index String
+
+  contest Contest @relation(fields: [contest_id], references: [contest_id])
+  problem Problem @relation(fields: [problem_id], references: [problem_id])
+
+  @@id([contest_id, problem_id])
+}

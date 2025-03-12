@@ -1,0 +1,12 @@
+model ContestStanding {
+  contest_id      String
+  user_id         String
+  rank            Int
+  problems_solved Int
+  penalty         Int
+
+  contest Contest @relation(fields: [contest_id], references: [contest_id])
+  user    User    @relation(fields: [user_id], references: [user_id])
+
+  @@id([contest_id, user_id])
+}

@@ -1,0 +1,18 @@
+model Submission {
+  submission_id   String              @id @default(cuid())
+  user_id         String
+  contest_id      String
+  problem_id      String
+  language        ProgrammingLanguage
+  code            String
+  submission_time DateTime            @default(now())
+  verdict         SubmissionStatus
+  execution_time  Int?
+  memory_used     Int?
+
+  results SubmissionResult[]
+
+  user    User    @relation(fields: [user_id], references: [user_id])
+  contest Contest @relation(fields: [contest_id], references: [contest_id])
+  problem Problem @relation(fields: [problem_id], references: [problem_id])
+}

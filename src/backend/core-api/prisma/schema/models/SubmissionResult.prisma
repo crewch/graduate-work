@@ -1,0 +1,13 @@
+model SubmissionResult {
+  submission_id  String
+  test_id        String
+  status         SubmissionStatus
+  error_message  String?
+  execution_time Int?
+  memory_used    Int?
+
+  submission Submission @relation(fields: [submission_id], references: [submission_id])
+  testCase   TestCase   @relation(fields: [test_id], references: [test_id])
+
+  @@id([submission_id, test_id])
+}

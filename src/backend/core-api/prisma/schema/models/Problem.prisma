@@ -1,0 +1,19 @@
+model Problem {
+  problem_id    String   @id @default(cuid())
+  title         String
+  description   String
+  input_format  String
+  output_format String
+  time_limit    Int
+  memory_limit  Int
+  created_by    String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  contests    ContestProblem[]
+  samples     ProblemSample[]
+  testCases   TestCase[]
+  submissions Submission[]
+
+  creator User @relation(fields: [created_by], references: [user_id], name: "CreatedProblems")
+}

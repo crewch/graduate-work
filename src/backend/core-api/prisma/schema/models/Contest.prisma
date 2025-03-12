@@ -1,0 +1,17 @@
+model Contest {
+  contest_id  String        @id @default(cuid())
+  title       String
+  description String
+  start_time  DateTime
+  end_time    DateTime
+  status      ContestStatus
+  created_by  String
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+
+  problems    ContestProblem[]
+  submissions Submission[]
+  standings   ContestStanding[]
+
+  creator User @relation(fields: [created_by], references: [user_id], name: "CreatedContests")
+}
