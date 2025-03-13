@@ -4,10 +4,10 @@ services:
     container_name: core-api
     build: ./src/backend/core-api
     ports:
-      - '4200:4200'
+      - '${CORE_API_PORT}:${CORE_API_PORT}'
     environment:
-      PORT: 4200
-      DATABASE_URL: postgresql://crewch:2003@postgres:5432/mydb?schema=public
+      PORT: ${CORE_API_PORT}
+      DATABASE_URL: ${DATABASE_URL}
     depends_on:
       postgres:
         condition: service_healthy
@@ -18,24 +18,23 @@ services:
   postgres:
     image: postgres:17.4
     environment:
-      POSTGRES_USER: crewch
-      POSTGRES_PASSWORD: 2003
-      POSTGRES_DB: mydb
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U crewch -d mydb']
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
       interval: 5s
       timeout: 5s
       retries: 5
     ports:
-      - '5432:5432'
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
     networks:
       - api_network
 
 volumes:
   postgres_data:
-  node_modules:
 
 networks:
   api_network:
