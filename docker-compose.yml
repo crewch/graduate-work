@@ -8,6 +8,9 @@ services:
     environment:
       PORT: ${CORE_API_PORT}
       DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      NODE_ENV: ${NODE_ENV}
+      DOMAIN_PROD: ${DOMAIN_PROD}
     depends_on:
       postgres:
         condition: service_healthy
