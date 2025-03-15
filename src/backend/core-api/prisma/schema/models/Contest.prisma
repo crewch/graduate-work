@@ -1,17 +1,19 @@
 model Contest {
-  contest_id  String        @id @default(cuid())
+  contestId   String        @id @default(cuid()) @map("contest_id")
   title       String
   description String
-  start_time  DateTime
-  end_time    DateTime
+  startTime   DateTime      @map("start_time")
+  endTime     DateTime      @map("end_time")
   status      ContestStatus
-  created_by  String
-  created_at  DateTime      @default(now())
-  updated_at  DateTime      @updatedAt
+  createdBy   String        @map("created_by")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
 
   problems    ContestProblem[]
   submissions Submission[]
   standings   ContestStanding[]
 
-  creator User @relation(fields: [created_by], references: [user_id], name: "CreatedContests")
+  creator User @relation(fields: [createdBy], references: [userId], name: "CreatedContests")
+
+  @@map("contests")
 }

@@ -30,5 +30,5 @@ export class CreateUserDto {
       'Пароль пользователя (минимум 6 символов, хотя бы одна заглавная буква и цифра)',
   })
   @IsStrongPassword()
-  password_hash: string;
+  passwordHash: string;
 }

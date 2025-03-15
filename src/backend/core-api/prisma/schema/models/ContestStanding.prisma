@@ -1,12 +1,13 @@
 model ContestStanding {
-  contest_id      String
-  user_id         String
-  rank            Int
-  problems_solved Int
-  penalty         Int
+  contestId      String @map("contest_id")
+  userId         String @map("user_id")
+  rank           Int
+  problemsSolved Int    @map("problems_solved")
+  penalty        Int
 
-  contest Contest @relation(fields: [contest_id], references: [contest_id])
-  user    User    @relation(fields: [user_id], references: [user_id])
+  contest Contest @relation(fields: [contestId], references: [contestId])
+  user    User    @relation(fields: [userId], references: [userId])
 
-  @@id([contest_id, user_id])
+  @@id([contestId, userId])
+  @@map("contest_standings")
 }

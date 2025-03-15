@@ -34,15 +34,15 @@ export class AuthService {
     }
 
     const isValidPassword = await verify(
-      user.password_hash,
-      signInDto.password_hash,
+      user.passwordHash,
+      signInDto.passwordHash,
     );
 
     if (!isValidPassword) {
       throw new UnauthorizedException('Неверный пароль');
     }
 
-    const tokens = this.issueTokens(user.user_id);
+    const tokens = this.issueTokens(user.userId);
 
     return { user: plainToInstance(UserEntity, user), ...tokens };
   }
@@ -58,7 +58,7 @@ export class AuthService {
 
     const user = await this.usersService.create(signUpDto);
 
-    const tokens = this.issueTokens(user.user_id);
+    const tokens = this.issueTokens(user.userId);
 
     return { user: plainToInstance(UserEntity, user), ...tokens };
   }

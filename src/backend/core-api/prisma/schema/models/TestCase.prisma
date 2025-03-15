@@ -1,10 +1,12 @@
 model TestCase {
-  test_id         String @id @default(cuid())
-  problem_id      String
-  input_data      String
-  expected_output String
+  testId         String @id @default(cuid()) @map("test_id")
+  problemId      String @map("problem_id")
+  inputData      String @map("input_data")
+  expectedOutput String @map("expected_output")
 
   submissionResults SubmissionResult[]
 
-  problem Problem @relation(fields: [problem_id], references: [problem_id])
+  problem Problem @relation(fields: [problemId], references: [problemId])
+
+  @@map("test_cases")
 }

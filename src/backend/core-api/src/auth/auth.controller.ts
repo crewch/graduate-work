@@ -43,7 +43,7 @@ export class AuthController {
     description: 'Пользователь успешно зарегистрирован',
     type: AuthEntity,
   })
-  @ApiResponse({ status: 409, description: 'Пользователь уже существует' })
+  @ApiResponse({ status: 400, description: 'Пользователь уже существует' })
   async register(
     @Body() dto: SignUpDto,
     @Res({ passthrough: true }) res: Response,

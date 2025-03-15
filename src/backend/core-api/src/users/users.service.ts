@@ -9,7 +9,7 @@ export class UsersService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
-    createUserDto.password_hash = await hash(createUserDto.password_hash);
+    createUserDto.passwordHash = await hash(createUserDto.passwordHash);
 
     return this.prismaService.user.create({
       data: createUserDto,
@@ -23,7 +23,7 @@ export class UsersService {
   async findById(id: string) {
     const user = await this.prismaService.user.findUnique({
       where: {
-        user_id: id,
+        userId: id,
       },
     });
 
@@ -47,7 +47,7 @@ export class UsersService {
   update(id: string, updateUserDto: UpdateUserDto) {
     return this.prismaService.user.update({
       where: {
-        user_id: id,
+        userId: id,
       },
       data: updateUserDto,
     });
@@ -55,7 +55,7 @@ export class UsersService {
 
   async remove(id: string) {
     const deletedUser = await this.prismaService.user.delete({
-      where: { user_id: id },
+      where: { userId: id },
     });
 
     if (!deletedUser) {
@@ -67,14 +67,14 @@ export class UsersService {
 
   async updateRating(userId: string, newRating: number) {
     return this.prismaService.user.update({
-      where: { user_id: userId },
+      where: { userId: userId },
       data: { rating: newRating },
     });
   }
 
   async getCreatedContests(userId: string) {
     const user = await this.prismaService.user.findUnique({
-      where: { user_id: userId },
+      where: { userId: userId },
       include: { createdContests: true },
     });
 
@@ -87,7 +87,7 @@ export class UsersService {
 
   async getCreatedProblems(userId: string) {
     const user = await this.prismaService.user.findUnique({
-      where: { user_id: userId },
+      where: { userId: userId },
       include: { createdProblems: true },
     });
 

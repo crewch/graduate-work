@@ -27,8 +27,8 @@ async function bootstrap() {
   app.use(cookieParser());
 
   const config = new DocumentBuilder()
-    .setTitle('Api docs')
-    .setDescription('API Reference')
+    .setTitle('API Documentation')
+    .setDescription('API description for the application')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

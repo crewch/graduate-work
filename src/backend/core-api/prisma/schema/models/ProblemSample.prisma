@@ -1,9 +1,11 @@
 model ProblemSample {
-  sample_id     String  @id @default(cuid())
-  problem_id    String
-  input_sample  String
-  output_sample String
-  explanation   String?
+  sampleId     String  @id @default(cuid()) @map("sample_id")
+  problemId    String  @map("problem_id")
+  inputSample  String  @map("input_sample")
+  outputSample String  @map("output_sample")
+  explanation  String? @map("explanation")
 
-  problem Problem @relation(fields: [problem_id], references: [problem_id])
+  problem Problem @relation(fields: [problemId], references: [problemId])
+
+  @@map("problem_samples")
 }

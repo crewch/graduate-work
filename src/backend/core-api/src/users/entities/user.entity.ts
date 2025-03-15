@@ -8,7 +8,7 @@ export class UserEntity implements User {
   }
 
   @ApiProperty()
-  user_id: string;
+  userId: string;
 
   @ApiProperty()
   username: string;
@@ -17,14 +17,14 @@ export class UserEntity implements User {
   email: string;
 
   @Exclude()
-  password_hash: string;
+  passwordHash: string;
 
   @ApiProperty()
   rating: number;
 
   @ApiProperty()
-  created_at: Date;
+  createdAt: Date;
 
   @ApiProperty()
-  updated_at: Date;
+  updatedAt: Date;
 }
