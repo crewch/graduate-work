@@ -6,7 +6,7 @@ services:
     ports:
       - '${CORE_API_PORT}:${CORE_API_PORT}'
     environment:
-      PORT: ${CORE_API_PORT}
+      CORE_API_PORT: ${CORE_API_PORT}
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET}
       NODE_ENV: ${NODE_ENV}
