@@ -7,10 +7,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in';
 import { SignUpDto } from './dto/sign-up.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthEntity } from './entities/auth.entity';
 
 @Controller('auth')
@@ -89,7 +89,15 @@ export class AuthController {
   @Post('sign-out')
   @ApiOperation({ summary: 'Выход из системы' })
   @ApiResponse({ status: 200, description: 'Успешный выход' })
-  logout(@Res({ passthrough: true }) res: Response) {
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const refreshTokenFromCookies = req.cookies[
+      this.authService.REFRESH_TOKEN_NAME
+    ] as string | undefined;
+
+    if (refreshTokenFromCookies) {
+      await this.authService.deleteToken(refreshTokenFromCookies);
+    }
+
     this.authService.removeRefreshTokenFromResponse(res);
 
     return true;

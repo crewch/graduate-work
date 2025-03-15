@@ -11,15 +11,22 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       NODE_ENV: ${NODE_ENV}
       DOMAIN_PROD: ${DOMAIN_PROD}
+      REDIS_URL: ${REDIS_URL}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - api_network
+    restart: always
     command: sh -c "yarn prisma migrate deploy && yarn prisma generate && yarn start:prod"
 
   postgres:
     image: postgres:17.4
+    ports:
+      - '${POSTGRES_PORT}:5432'
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -31,13 +38,31 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    ports:
-      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
     networks:
       - api_network
+    restart: always
+
+  redis:
+    image: redis:latest
+    ports:
+      - '${REDIS_PORT}:6379'
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD-SHELL', 'redis-cli -a ${REDIS_PASSWORD} ping']
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    networks:
+      - api_network
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASSWORD}
 
 volumes:
   postgres_data:
+  redis_data:
 
 networks:
   api_network:

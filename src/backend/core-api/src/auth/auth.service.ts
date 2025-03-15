@@ -7,6 +7,8 @@ import { JwtService } from '@nestjs/jwt';
 import { verify } from 'argon2';
 import { Response } from 'express';
 import { plainToInstance } from 'class-transformer';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import Redis from 'ioredis';
 import { UsersService } from 'src/users/users.service';
 import { SignInDto } from './dto/sign-in';
 import { SignUpDto } from './dto/sign-up.dto';
@@ -15,7 +17,8 @@ import { UserEntity } from 'src/users/entities/user.entity';
 @Injectable()
 export class AuthService {
   readonly REFRESH_TOKEN_NAME = 'refreshToken';
-  private readonly EXPIRE_DAY_REFRESH_TOKEN = 1;
+  private readonly EXPIRE_DAYS_REFRESH_TOKEN = 7;
+  private readonly DAY = 24 * 60 * 60;
   private readonly IS_PRODUCTION = process.env.NODE_ENV === 'production';
   private readonly DOMAIN = this.IS_PRODUCTION
     ? process.env.DOMAIN_PROD
@@ -24,6 +27,7 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    @InjectRedis() private readonly redisService: Redis,
   ) {}
 
   async signIn(signInDto: SignInDto) {
@@ -33,32 +37,43 @@ export class AuthService {
       throw new UnauthorizedException('Пользователь не найден');
     }
 
-    const isValidPassword = await verify(
-      user.passwordHash,
-      signInDto.passwordHash,
-    );
+    const isValidPassword = await verify(user.passwordHash, signInDto.password);
 
     if (!isValidPassword) {
       throw new UnauthorizedException('Неверный пароль');
     }
 
-    const tokens = this.issueTokens(user.userId);
+    const tokens = await this.issueTokens(user.userId);
 
     return { user: plainToInstance(UserEntity, user), ...tokens };
   }
 
   async signUp(signUpDto: SignUpDto) {
-    const existingUser = await this.usersService.findByLogin(signUpDto.email);
+    const { username, email, password } = signUpDto;
 
-    if (existingUser) {
+    const existingUserEmail = await this.usersService.findByLogin(email);
+
+    if (existingUserEmail) {
       throw new BadRequestException(
-        'Пользователь с таким логином уже существует',
+        'Пользователь с таким email уже существует',
       );
     }
 
-    const user = await this.usersService.create(signUpDto);
+    const existingUsername = await this.usersService.findByLogin(username);
 
-    const tokens = this.issueTokens(user.userId);
+    if (existingUsername) {
+      throw new BadRequestException(
+        'Пользователь с таким username уже существует',
+      );
+    }
+
+    const user = await this.usersService.create({
+      username,
+      email,
+      passwordHash: password,
+    });
+
+    const tokens = await this.issueTokens(user.userId);
 
     return { user: plainToInstance(UserEntity, user), ...tokens };
   }
@@ -72,19 +87,33 @@ export class AuthService {
       throw new UnauthorizedException('Refresh токен устарел');
     }
 
+    const userId = await this.getToken(refreshToken);
+
+    if (!userId || userId !== result.id) {
+      throw new UnauthorizedException('Невалидный refresh токен');
+    }
+
+    await this.deleteToken(refreshToken);
+
     const user = await this.usersService.findById(result.id);
 
-    const tokens = this.issueTokens(result.id);
+    const tokens = await this.issueTokens(result.id);
 
     return { user: plainToInstance(UserEntity, user), ...tokens };
   }
 
-  private issueTokens(id: string) {
+  private async issueTokens(id: string) {
     const payload = { id };
 
-    const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
 
-    const refreshToken = this.jwtService.sign(payload, { expiresIn: '24h' });
+    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+
+    await this.addToken(
+      refreshToken,
+      id,
+      this.EXPIRE_DAYS_REFRESH_TOKEN * this.DAY,
+    );
 
     return { accessToken, refreshToken };
   }
@@ -92,7 +121,7 @@ export class AuthService {
   addRefreshTokenToResponse(res: Response, refreshToken: string) {
     const expiresIn = new Date();
 
-    expiresIn.setDate(expiresIn.getDate() + this.EXPIRE_DAY_REFRESH_TOKEN);
+    expiresIn.setDate(expiresIn.getDate() + this.EXPIRE_DAYS_REFRESH_TOKEN);
 
     res.cookie(this.REFRESH_TOKEN_NAME, refreshToken, {
       httpOnly: true,
@@ -111,5 +140,17 @@ export class AuthService {
       secure: false, // todo настроить когда будет https
       sameSite: this.IS_PRODUCTION ? 'lax' : 'none',
     });
+  }
+
+  async addToken(token: string, userId: string, ttl: number) {
+    await this.redisService.set(`token:${token}`, userId, 'EX', ttl);
+  }
+
+  async getToken(token: string) {
+    return this.redisService.get(`token:${token}`);
+  }
+
+  async deleteToken(token: string) {
+    await this.redisService.del(`token:${token}`);
   }
 }

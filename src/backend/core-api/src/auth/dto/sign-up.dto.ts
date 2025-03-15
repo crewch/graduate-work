@@ -30,5 +30,5 @@ export class SignUpDto {
       'Пароль пользователя (минимум 6 символов, хотя бы одна заглавная буква и цифра)',
   })
   @IsStrongPassword()
-  passwordHash: string;
+  password: string;
 }
