@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { verify } from 'argon2';
-import { Response } from 'express';
+import { CookieOptions, Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
@@ -20,9 +20,12 @@ export class AuthService {
   private readonly EXPIRE_DAYS_REFRESH_TOKEN = 7;
   private readonly DAY = 24 * 60 * 60;
   private readonly IS_PRODUCTION = process.env.NODE_ENV === 'production';
-  private readonly DOMAIN = this.IS_PRODUCTION
-    ? process.env.DOMAIN_PROD
-    : 'localhost';
+  private readonly COOKIE_OPTIONS: CookieOptions = {
+    httpOnly: true,
+    secure: false, // todo настроить когда будет https `this.IS_PRODUCTION`
+    sameSite: this.IS_PRODUCTION ? 'lax' : 'none',
+    domain: this.IS_PRODUCTION ? process.env.DOMAIN_PROD : 'localhost',
+  };
 
   constructor(
     private readonly usersService: UsersService,
@@ -124,22 +127,13 @@ export class AuthService {
     expiresIn.setDate(expiresIn.getDate() + this.EXPIRE_DAYS_REFRESH_TOKEN);
 
     res.cookie(this.REFRESH_TOKEN_NAME, refreshToken, {
-      httpOnly: true,
+      ...this.COOKIE_OPTIONS,
       expires: expiresIn,
-      domain: this.DOMAIN,
-      secure: false, // todo настроить когда будет https
-      sameSite: this.IS_PRODUCTION ? 'lax' : 'none',
     });
   }
 
   removeRefreshTokenFromResponse(res: Response) {
-    res.cookie(this.REFRESH_TOKEN_NAME, '', {
-      httpOnly: true,
-      expires: new Date(0),
-      domain: this.DOMAIN,
-      secure: false, // todo настроить когда будет https
-      sameSite: this.IS_PRODUCTION ? 'lax' : 'none',
-    });
+    res.clearCookie(this.REFRESH_TOKEN_NAME, this.COOKIE_OPTIONS);
   }
 
   async addToken(token: string, userId: string, ttl: number) {

@@ -99,7 +99,5 @@ export class AuthController {
     }
 
     this.authService.removeRefreshTokenFromResponse(res);
-
-    return true;
   }
 }
