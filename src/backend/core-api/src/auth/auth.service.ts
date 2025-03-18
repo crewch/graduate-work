@@ -82,7 +82,7 @@ export class AuthService {
   }
 
   async getNewTokens(refreshToken: string) {
-    const result = await this.jwtService.verifyAsync<{ id: string }>(
+    const result = await this.jwtService.verifyAsync<{ sub: string }>(
       refreshToken,
     );
 
@@ -92,21 +92,21 @@ export class AuthService {
 
     const userId = await this.getToken(refreshToken);
 
-    if (!userId || userId !== result.id) {
+    if (!userId || userId !== result.sub) {
       throw new UnauthorizedException('Невалидный refresh токен');
     }
 
     await this.deleteToken(refreshToken);
 
-    const user = await this.usersService.findById(result.id);
+    const user = await this.usersService.findById(result.sub);
 
-    const tokens = await this.issueTokens(result.id);
+    const tokens = await this.issueTokens(result.sub);
 
     return { user: plainToInstance(UserEntity, user), ...tokens };
   }
 
-  private async issueTokens(id: string) {
-    const payload = { id };
+  private async issueTokens(userId: string) {
+    const payload = { sub: userId };
 
     const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
 
@@ -114,7 +114,7 @@ export class AuthService {
 
     await this.addToken(
       refreshToken,
-      id,
+      userId,
       this.EXPIRE_DAYS_REFRESH_TOKEN * this.DAY,
     );
 

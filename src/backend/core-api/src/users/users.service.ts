@@ -20,10 +20,10 @@ export class UsersService {
     return this.prismaService.user.findMany();
   }
 
-  async findById(id: string) {
+  async findById(userId: string) {
     const user = await this.prismaService.user.findUnique({
       where: {
-        userId: id,
+        userId,
       },
     });
 
@@ -44,18 +44,18 @@ export class UsersService {
     return user;
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
+  update(userId: string, updateUserDto: UpdateUserDto) {
     return this.prismaService.user.update({
       where: {
-        userId: id,
+        userId,
       },
       data: updateUserDto,
     });
   }
 
-  async remove(id: string) {
+  async remove(userId: string) {
     const deletedUser = await this.prismaService.user.delete({
-      where: { userId: id },
+      where: { userId },
     });
 
     if (!deletedUser) {
@@ -67,14 +67,14 @@ export class UsersService {
 
   async updateRating(userId: string, newRating: number) {
     return this.prismaService.user.update({
-      where: { userId: userId },
+      where: { userId },
       data: { rating: newRating },
     });
   }
 
   async getCreatedContests(userId: string) {
     const user = await this.prismaService.user.findUnique({
-      where: { userId: userId },
+      where: { userId },
       include: { createdContests: true },
     });
 
@@ -87,7 +87,7 @@ export class UsersService {
 
   async getCreatedProblems(userId: string) {
     const user = await this.prismaService.user.findUnique({
-      where: { userId: userId },
+      where: { userId },
       include: { createdProblems: true },
     });
 
