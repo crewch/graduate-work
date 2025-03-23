@@ -9,9 +9,9 @@ import {
 import { Request, Response } from 'express';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { SignInDto } from './dto/sign-in';
+import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
-import { AuthEntity } from './entities/auth.entity';
+import { AuthResponseDto } from './dto/auth-response.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -20,9 +20,9 @@ export class AuthController {
   @Post('sign-in')
   @ApiOperation({ summary: 'Авторизация пользователя' })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: 'Успешная авторизация',
-    type: AuthEntity,
+    type: AuthResponseDto,
   })
   @ApiResponse({ status: 401, description: 'Неверные учетные данные' })
   async login(
@@ -41,7 +41,7 @@ export class AuthController {
   @ApiResponse({
     status: 201,
     description: 'Пользователь успешно зарегистрирован',
-    type: AuthEntity,
+    type: AuthResponseDto,
   })
   @ApiResponse({ status: 400, description: 'Пользователь уже существует' })
   async register(
@@ -58,9 +58,9 @@ export class AuthController {
   @Post('sign-in/access-token')
   @ApiOperation({ summary: 'Обновление access/refresh токенов' })
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: 'Токены успешно обновлены',
-    type: AuthEntity,
+    type: AuthResponseDto,
   })
   @ApiResponse({ status: 401, description: 'Невалидный refresh токен' })
   async getNewTokens(
@@ -90,13 +90,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Выход из системы' })
   @ApiResponse({ status: 200, description: 'Успешный выход' })
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const refreshTokenFromCookies = req.cookies[
-      this.authService.REFRESH_TOKEN_NAME
-    ] as string | undefined;
-
-    if (refreshTokenFromCookies) {
-      await this.authService.deleteToken(refreshTokenFromCookies);
-    }
+    await this.authService.removeRefreshTokenFromStorage(req.cookies);
 
     this.authService.removeRefreshTokenFromResponse(res);
   }

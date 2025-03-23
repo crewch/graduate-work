@@ -4,7 +4,7 @@ model Contest {
   description String
   startTime   DateTime      @map("start_time")
   endTime     DateTime      @map("end_time")
-  status      ContestStatus
+  status      ContestStatus @default(UPCOMING)
   createdBy   String        @map("created_by")
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")

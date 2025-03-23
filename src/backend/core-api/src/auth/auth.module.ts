@@ -7,6 +7,7 @@ import { UsersModule } from 'src/users/users.module';
 import { JwtStrategy } from './jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { RedisModule } from '@nestjs-modules/ioredis';
+import { TokenStorageService } from './token-storage/token-storage.service';
 
 @Module({
   imports: [
@@ -33,6 +34,6 @@ import { RedisModule } from '@nestjs-modules/ioredis';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, TokenStorageService],
 })
 export class AuthModule {}

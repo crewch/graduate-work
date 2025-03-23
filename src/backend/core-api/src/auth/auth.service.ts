@@ -7,12 +7,11 @@ import { JwtService } from '@nestjs/jwt';
 import { verify } from 'argon2';
 import { CookieOptions, Response } from 'express';
 import { plainToInstance } from 'class-transformer';
-import { InjectRedis } from '@nestjs-modules/ioredis';
-import Redis from 'ioredis';
 import { UsersService } from 'src/users/users.service';
-import { SignInDto } from './dto/sign-in';
+import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { TokenStorageService } from './token-storage/token-storage.service';
+import { UserResponseDto } from 'src/users/dto/user-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +29,7 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-    @InjectRedis() private readonly redisService: Redis,
+    private readonly tokenStorageService: TokenStorageService,
   ) {}
 
   async signIn(signInDto: SignInDto) {
@@ -48,7 +47,7 @@ export class AuthService {
 
     const tokens = await this.issueTokens(user.userId);
 
-    return { user: plainToInstance(UserEntity, user), ...tokens };
+    return { user: plainToInstance(UserResponseDto, user), ...tokens };
   }
 
   async signUp(signUpDto: SignUpDto) {
@@ -78,7 +77,7 @@ export class AuthService {
 
     const tokens = await this.issueTokens(user.userId);
 
-    return { user: plainToInstance(UserEntity, user), ...tokens };
+    return { user: plainToInstance(UserResponseDto, user), ...tokens };
   }
 
   async getNewTokens(refreshToken: string) {
@@ -90,19 +89,19 @@ export class AuthService {
       throw new UnauthorizedException('Refresh токен устарел');
     }
 
-    const userId = await this.getToken(refreshToken);
+    const userId = await this.tokenStorageService.getToken(refreshToken);
 
     if (!userId || userId !== result.sub) {
       throw new UnauthorizedException('Невалидный refresh токен');
     }
 
-    await this.deleteToken(refreshToken);
+    await this.tokenStorageService.deleteToken(refreshToken);
 
     const user = await this.usersService.findById(result.sub);
 
     const tokens = await this.issueTokens(result.sub);
 
-    return { user: plainToInstance(UserEntity, user), ...tokens };
+    return { user: plainToInstance(UserResponseDto, user), ...tokens };
   }
 
   private async issueTokens(userId: string) {
@@ -112,7 +111,7 @@ export class AuthService {
 
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
-    await this.addToken(
+    await this.tokenStorageService.saveToken(
       refreshToken,
       userId,
       this.EXPIRE_DAYS_REFRESH_TOKEN * this.DAY,
@@ -136,15 +135,13 @@ export class AuthService {
     res.clearCookie(this.REFRESH_TOKEN_NAME, this.COOKIE_OPTIONS);
   }
 
-  async addToken(token: string, userId: string, ttl: number) {
-    await this.redisService.set(`token:${token}`, userId, 'EX', ttl);
-  }
+  async removeRefreshTokenFromStorage(
+    cookies: Record<string, string | undefined>,
+  ) {
+    const refreshTokenFromCookies = cookies[this.REFRESH_TOKEN_NAME];
 
-  async getToken(token: string) {
-    return this.redisService.get(`token:${token}`);
-  }
-
-  async deleteToken(token: string) {
-    await this.redisService.del(`token:${token}`);
+    if (refreshTokenFromCookies) {
+      await this.tokenStorageService.deleteToken(refreshTokenFromCookies);
+    }
   }
 }

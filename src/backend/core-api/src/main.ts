@@ -21,7 +21,7 @@ async function bootstrap() {
   const configService = app.get<ConfigService>(ConfigService);
 
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.use(helmet());
   app.use(cookieParser());

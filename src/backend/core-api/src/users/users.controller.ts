@@ -12,9 +12,9 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { UserEntity } from './entities/user.entity';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/user.decorator';
+import { UserResponseDto } from './dto/user-response.dto';
 
 @Auth()
 @ApiBearerAuth()
@@ -24,66 +24,73 @@ export class UsersController {
 
   @Post()
   @ApiOperation({ summary: 'Создать нового пользователя' })
-  @ApiResponse({ status: 201, type: UserEntity })
+  @ApiResponse({ status: 201, type: UserResponseDto })
   async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.usersService.create(createUserDto);
 
-    return new UserEntity(user);
+    return new UserResponseDto(user);
   }
 
   @Get()
   @ApiOperation({ summary: 'Получить всех пользователей' })
-  @ApiResponse({ status: 200, type: [UserEntity] })
+  @ApiResponse({ status: 200, type: [UserResponseDto] })
   async findAll() {
     const users = await this.usersService.findAll();
 
-    return users.map((user) => new UserEntity(user));
+    return users.map((user) => new UserResponseDto(user));
   }
 
   @Get('profile')
   @ApiOperation({ summary: 'Получить текущего пользователя' })
-  @ApiResponse({ status: 200, type: UserEntity })
+  @ApiResponse({ status: 200, type: UserResponseDto })
   getProfile(@CurrentUser() user: User) {
-    return new UserEntity(user);
+    return new UserResponseDto(user);
+  }
+
+  @Patch('profile')
+  @ApiOperation({ summary: 'Обновить данные текущего пользователя' })
+  @ApiResponse({ status: 200, type: UserResponseDto })
+  async updateProfile(
+    @CurrentUser('userId') userId: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    const user = await this.usersService.update(userId, updateUserDto);
+
+    return new UserResponseDto(user);
+  }
+
+  @Delete('profile')
+  @ApiOperation({ summary: 'Удалить текущего пользователя' })
+  @ApiResponse({ status: 204 })
+  async removeProfile(@CurrentUser('userId') userId: string) {
+    await this.usersService.remove(userId);
   }
 
   @Get(':userId')
   @ApiOperation({ summary: 'Получить пользователя по ID' })
-  @ApiResponse({ status: 200, type: UserEntity })
+  @ApiResponse({ status: 200, type: UserResponseDto })
   async findOne(@Param('userId') userId: string) {
     const user = await this.usersService.findById(userId);
 
-    return new UserEntity(user);
+    return new UserResponseDto(user);
   }
 
   @Patch(':userId')
-  @ApiOperation({ summary: 'Обновить данные пользователя' })
-  @ApiResponse({ status: 200, type: UserEntity })
+  @ApiOperation({ summary: 'Обновить данные пользователя по ID' })
+  @ApiResponse({ status: 200, type: UserResponseDto })
   async update(
     @Param('userId') userId: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
     const user = await this.usersService.update(userId, updateUserDto);
 
-    return new UserEntity(user);
+    return new UserResponseDto(user);
   }
 
   @Delete(':userId')
-  @ApiOperation({ summary: 'Удалить пользователя' })
-  @ApiResponse({ status: 200, type: UserEntity })
-  remove(@Param('userId') userId: string) {
-    return this.usersService.remove(userId);
-  }
-
-  @Get(':userId/contests')
-  @ApiOperation({ summary: 'Получить созданные контесты' })
-  getCreatedContests(@Param('userId') userId: string) {
-    return this.usersService.getCreatedContests(userId);
-  }
-
-  @Get(':userId/problems')
-  @ApiOperation({ summary: 'Получить созданные задачи' })
-  async getCreatedProblems(@Param('userId') userId: string) {
-    return this.usersService.getCreatedProblems(userId);
+  @ApiOperation({ summary: 'Удалить пользователя по ID' })
+  @ApiResponse({ status: 204 })
+  async remove(@Param('userId') userId: string) {
+    await this.usersService.remove(userId);
   }
 }

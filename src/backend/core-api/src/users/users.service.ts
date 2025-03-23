@@ -44,7 +44,11 @@ export class UsersService {
     return user;
   }
 
-  update(userId: string, updateUserDto: UpdateUserDto) {
+  async update(userId: string, updateUserDto: UpdateUserDto) {
+    if (updateUserDto.passwordHash) {
+      updateUserDto.passwordHash = await hash(updateUserDto.passwordHash);
+    }
+
     return this.prismaService.user.update({
       where: {
         userId,
@@ -63,38 +67,5 @@ export class UsersService {
     }
 
     return deletedUser;
-  }
-
-  async updateRating(userId: string, newRating: number) {
-    return this.prismaService.user.update({
-      where: { userId },
-      data: { rating: newRating },
-    });
-  }
-
-  async getCreatedContests(userId: string) {
-    const user = await this.prismaService.user.findUnique({
-      where: { userId },
-      include: { createdContests: true },
-    });
-
-    if (!user) {
-      throw new NotFoundException('Пользователь не найден');
-    }
-
-    return user.createdContests;
-  }
-
-  async getCreatedProblems(userId: string) {
-    const user = await this.prismaService.user.findUnique({
-      where: { userId },
-      include: { createdProblems: true },
-    });
-
-    if (!user) {
-      throw new NotFoundException('Пользователь не найден');
-    }
-
-    return user.createdProblems;
   }
 }
