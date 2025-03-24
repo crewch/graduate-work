@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ContestProblem, Problem } from '@prisma/client';
+import { ProblemResponseDto } from 'src/problems/dto/problem-response.dto';
 
 export class ContestProblemResponseDto implements ContestProblem {
   @ApiProperty({ example: 'abc123', description: 'ID контеста' })
@@ -16,7 +17,7 @@ export class ContestProblemResponseDto implements ContestProblem {
 
   @ApiProperty({
     description: 'Задача',
-    // type: // todo добавить тип для swagger
+    type: ProblemResponseDto,
   })
   problem: Problem;
 }

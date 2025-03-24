@@ -6,8 +6,8 @@ model SubmissionResult {
   executionTime Int?             @map("execution_time")
   memoryUsed    Int?             @map("memory_used")
 
-  submission Submission @relation(fields: [submissionId], references: [submissionId])
-  testCase   TestCase   @relation(fields: [testId], references: [testId])
+  submission Submission @relation(fields: [submissionId], references: [submissionId], onDelete: Cascade)
+  testCase   TestCase   @relation(fields: [testId], references: [testId], onDelete: Cascade)
 
   @@id([submissionId, testId])
   @@map("submission_results")

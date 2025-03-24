@@ -25,8 +25,8 @@ export class UsersController {
   @Post()
   @ApiOperation({ summary: 'Создать нового пользователя' })
   @ApiResponse({ status: 201, type: UserResponseDto })
-  async create(@Body() createUserDto: CreateUserDto) {
-    const user = await this.usersService.create(createUserDto);
+  async create(@Body() dto: CreateUserDto) {
+    const user = await this.usersService.create(dto);
 
     return new UserResponseDto(user);
   }
@@ -52,9 +52,9 @@ export class UsersController {
   @ApiResponse({ status: 200, type: UserResponseDto })
   async updateProfile(
     @CurrentUser('userId') userId: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() dto: UpdateUserDto,
   ) {
-    const user = await this.usersService.update(userId, updateUserDto);
+    const user = await this.usersService.update(userId, dto);
 
     return new UserResponseDto(user);
   }
@@ -78,11 +78,8 @@ export class UsersController {
   @Patch(':userId')
   @ApiOperation({ summary: 'Обновить данные пользователя по ID' })
   @ApiResponse({ status: 200, type: UserResponseDto })
-  async update(
-    @Param('userId') userId: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    const user = await this.usersService.update(userId, updateUserDto);
+  async update(@Param('userId') userId: string, @Body() dto: UpdateUserDto) {
+    const user = await this.usersService.update(userId, dto);
 
     return new UserResponseDto(user);
   }

@@ -17,9 +17,21 @@ export class ContestsService {
     private readonly contestProblemService: ContestProblemService,
   ) {}
 
-  async create(userId: string, createContestDto: CreateContestDto) {
+  async create(userId: string, dto: CreateContestDto) {
     return this.prismaService.$transaction(async (tx) => {
-      const { problemIds, ...contestData } = createContestDto;
+      const { problemIds, ...contestData } = dto;
+
+      const now = new Date();
+
+      if (contestData.startTime >= contestData.endTime) {
+        throw new BadRequestException(
+          'Время начала должно быть меньше времени окончания',
+        );
+      }
+
+      if (contestData.startTime <= now) {
+        throw new BadRequestException('Время начала должно быть в будущем');
+      }
 
       const contest = await tx.contest.create({
         data: { createdBy: userId, ...contestData },
@@ -68,9 +80,9 @@ export class ContestsService {
     return contest;
   }
 
-  async update(contestId: string, updateContestDto: UpdateContestDto) {
+  async update(contestId: string, dto: UpdateContestDto) {
     return this.prismaService.$transaction(async (tx) => {
-      const { problemIds, ...contestData } = updateContestDto;
+      const { problemIds, ...contestData } = dto;
 
       const contest = await tx.contest.update({
         where: {
@@ -157,11 +169,6 @@ export class ContestsService {
   }
 
   remove(contestId: string) {
-    return this.prismaService.$transaction(async (tx) => {
-      await tx.contestStanding.deleteMany({ where: { contestId } });
-      await tx.contestProblem.deleteMany({ where: { contestId } });
-      await tx.submission.deleteMany({ where: { contestId } });
-      await tx.contest.delete({ where: { contestId } });
-    });
+    return this.prismaService.contest.delete({ where: { contestId } });
   }
 }

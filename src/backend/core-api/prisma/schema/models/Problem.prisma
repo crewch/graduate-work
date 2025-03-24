@@ -6,7 +6,7 @@ model Problem {
   outputFormat String   @map("output_format")
   timeLimit    Int      @map("time_limit")
   memoryLimit  Int      @map("memory_limit")
-  createdBy    String   @map("created_by")
+  createdBy    String?  @map("created_by")
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
@@ -15,7 +15,7 @@ model Problem {
   testCases   TestCase[]
   submissions Submission[]
 
-  creator User @relation(fields: [createdBy], references: [userId], name: "CreatedProblems")
+  creator User? @relation(fields: [createdBy], references: [userId], onDelete: SetNull)
 
   @@map("problems")
 }

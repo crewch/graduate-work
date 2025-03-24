@@ -8,11 +8,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UsersService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
-    createUserDto.passwordHash = await hash(createUserDto.passwordHash);
+  async create(dto: CreateUserDto) {
+    dto.passwordHash = await hash(dto.passwordHash);
 
     return this.prismaService.user.create({
-      data: createUserDto,
+      data: dto,
     });
   }
 
@@ -44,16 +44,16 @@ export class UsersService {
     return user;
   }
 
-  async update(userId: string, updateUserDto: UpdateUserDto) {
-    if (updateUserDto.passwordHash) {
-      updateUserDto.passwordHash = await hash(updateUserDto.passwordHash);
+  async update(userId: string, dto: UpdateUserDto) {
+    if (dto.passwordHash) {
+      dto.passwordHash = await hash(dto.passwordHash);
     }
 
     return this.prismaService.user.update({
       where: {
         userId,
       },
-      data: updateUserDto,
+      data: dto,
     });
   }
 

@@ -5,7 +5,7 @@ model Contest {
   startTime   DateTime      @map("start_time")
   endTime     DateTime      @map("end_time")
   status      ContestStatus @default(UPCOMING)
-  createdBy   String        @map("created_by")
+  createdBy   String?       @map("created_by")
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
 
@@ -13,7 +13,7 @@ model Contest {
   submissions Submission[]
   standings   ContestStanding[]
 
-  creator User @relation(fields: [createdBy], references: [userId], name: "CreatedContests")
+  creator User? @relation(fields: [createdBy], references: [userId], onDelete: SetNull)
 
   @@map("contests")
 }

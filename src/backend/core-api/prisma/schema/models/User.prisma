@@ -10,8 +10,8 @@ model User {
   submissions Submission[]
   standings   ContestStanding[]
 
-  createdContests Contest[] @relation("CreatedContests")
-  createdProblems Problem[] @relation("CreatedProblems")
+  createdContests Contest[]
+  createdProblems Problem[]
 
   @@map("users")
 }

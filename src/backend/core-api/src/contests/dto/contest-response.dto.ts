@@ -30,8 +30,13 @@ export class ContestResponseDto implements Contest {
   })
   status: $Enums.ContestStatus;
 
-  @ApiProperty({ description: 'ID создателя контеста' })
-  createdBy: string;
+  @ApiProperty({
+    description: 'ID создателя контеста',
+    example: 'cm8m45vli0083s9rvmsn',
+    nullable: true,
+    required: false,
+  })
+  createdBy: string | null;
 
   @ApiProperty({
     description: 'Дата последнего обновления',

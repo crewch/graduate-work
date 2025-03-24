@@ -12,9 +12,9 @@ model Submission {
 
   results SubmissionResult[]
 
-  user    User    @relation(fields: [userId], references: [userId])
-  contest Contest @relation(fields: [contestId], references: [contestId])
-  problem Problem @relation(fields: [problemId], references: [problemId])
+  user    User    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  contest Contest @relation(fields: [contestId], references: [contestId], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [problemId], onDelete: Cascade)
 
   @@map("submissions")
 }

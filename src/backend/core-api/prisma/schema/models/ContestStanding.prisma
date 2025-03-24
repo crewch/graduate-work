@@ -5,8 +5,8 @@ model ContestStanding {
   problemsSolved Int    @map("problems_solved")
   penalty        Int
 
-  contest Contest @relation(fields: [contestId], references: [contestId])
-  user    User    @relation(fields: [userId], references: [userId])
+  contest Contest @relation(fields: [contestId], references: [contestId], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@id([contestId, userId])
   @@map("contest_standings")

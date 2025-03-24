@@ -37,11 +37,8 @@ export class ContestsController {
     description: 'Контест успешно создан',
     type: ContestResponseDto,
   })
-  create(
-    @CurrentUser('userId') userId: string,
-    @Body() createContestDto: CreateContestDto,
-  ) {
-    return this.contestService.create(userId, createContestDto);
+  create(@CurrentUser('userId') userId: string, @Body() dto: CreateContestDto) {
+    return this.contestService.create(userId, dto);
   }
 
   @Get()
@@ -77,11 +74,8 @@ export class ContestsController {
     description: 'Контест обновлен',
     type: ContestResponseDto,
   })
-  update(
-    @Param('contestId') contestId: string,
-    @Body() updateContestDto: UpdateContestDto,
-  ) {
-    return this.contestService.update(contestId, updateContestDto);
+  update(@Param('contestId') contestId: string, @Body() dto: UpdateContestDto) {
+    return this.contestService.update(contestId, dto);
   }
 
   @Delete(':contestId')

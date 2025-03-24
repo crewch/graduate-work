@@ -32,14 +32,14 @@ export class AuthService {
     private readonly tokenStorageService: TokenStorageService,
   ) {}
 
-  async signIn(signInDto: SignInDto) {
-    const user = await this.usersService.findByLogin(signInDto.login);
+  async signIn(dto: SignInDto) {
+    const user = await this.usersService.findByLogin(dto.login);
 
     if (!user) {
       throw new UnauthorizedException('Пользователь не найден');
     }
 
-    const isValidPassword = await verify(user.passwordHash, signInDto.password);
+    const isValidPassword = await verify(user.passwordHash, dto.password);
 
     if (!isValidPassword) {
       throw new UnauthorizedException('Неверный пароль');
@@ -50,8 +50,8 @@ export class AuthService {
     return { user: plainToInstance(UserResponseDto, user), ...tokens };
   }
 
-  async signUp(signUpDto: SignUpDto) {
-    const { username, email, password } = signUpDto;
+  async signUp(dto: SignUpDto) {
+    const { username, email, password } = dto;
 
     const existingUserEmail = await this.usersService.findByLogin(email);
 

@@ -3,8 +3,8 @@ model ContestProblem {
   problemId    String @map("problem_id")
   problemIndex String @map("problem_index")
 
-  contest Contest @relation(fields: [contestId], references: [contestId])
-  problem Problem @relation(fields: [problemId], references: [problemId])
+  contest Contest @relation(fields: [contestId], references: [contestId], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [problemId], onDelete: Cascade)
 
   @@id([contestId, problemId])
   @@map("contest_problems")

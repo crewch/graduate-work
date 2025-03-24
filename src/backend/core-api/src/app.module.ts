@@ -4,6 +4,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ContestsModule } from './contests/contests.module';
+import { ProblemsModule } from './problems/problems.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ContestsModule } from './contests/contests.module';
     UsersModule,
     AuthModule,
     ContestsModule,
+    ProblemsModule,
   ],
   controllers: [],
   providers: [],
