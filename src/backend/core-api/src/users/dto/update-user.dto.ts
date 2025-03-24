@@ -5,8 +5,7 @@ import { IsNumber, IsOptional } from 'class-validator';
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @ApiProperty({
     example: 1600,
-    description: 'Новый рейтинг пользователя (опционально)',
-    required: false,
+    description: 'Новый рейтинг пользователя',
   })
   @IsOptional()
   @IsNumber()

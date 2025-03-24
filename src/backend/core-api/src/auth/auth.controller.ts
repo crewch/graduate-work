@@ -1,13 +1,20 @@
 import {
   Body,
   Controller,
+  HttpCode,
   Post,
   Req,
   Res,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
@@ -19,12 +26,13 @@ export class AuthController {
 
   @Post('sign-in')
   @ApiOperation({ summary: 'Авторизация пользователя' })
-  @ApiResponse({
-    status: 201,
+  @ApiCreatedResponse({
     description: 'Успешная авторизация',
     type: AuthResponseDto,
   })
-  @ApiResponse({ status: 401, description: 'Неверные учетные данные' })
+  @ApiUnauthorizedResponse({
+    description: 'Неверные учетные данные',
+  })
   async login(
     @Body() dto: SignInDto,
     @Res({ passthrough: true }) res: Response,
@@ -38,12 +46,13 @@ export class AuthController {
 
   @Post('sign-up')
   @ApiOperation({ summary: 'Регистрация нового пользователя' })
-  @ApiResponse({
-    status: 201,
+  @ApiCreatedResponse({
     description: 'Пользователь успешно зарегистрирован',
     type: AuthResponseDto,
   })
-  @ApiResponse({ status: 400, description: 'Пользователь уже существует' })
+  @ApiBadRequestResponse({
+    description: 'Пользователь уже существует',
+  })
   async register(
     @Body() dto: SignUpDto,
     @Res({ passthrough: true }) res: Response,
@@ -57,12 +66,11 @@ export class AuthController {
 
   @Post('sign-in/access-token')
   @ApiOperation({ summary: 'Обновление access/refresh токенов' })
-  @ApiResponse({
-    status: 201,
+  @ApiCreatedResponse({
     description: 'Токены успешно обновлены',
     type: AuthResponseDto,
   })
-  @ApiResponse({ status: 401, description: 'Невалидный refresh токен' })
+  @ApiUnauthorizedResponse({ description: 'Невалидный refresh токен' })
   async getNewTokens(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
@@ -87,8 +95,9 @@ export class AuthController {
   }
 
   @Post('sign-out')
+  @HttpCode(204)
   @ApiOperation({ summary: 'Выход из системы' })
-  @ApiResponse({ status: 200, description: 'Успешный выход' })
+  @ApiNoContentResponse({ description: 'Успешный выход' })
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     await this.authService.removeRefreshTokenFromStorage(req.cookies);
 

@@ -1,5 +1,47 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Problem } from '@prisma/client';
+import { Problem, ProblemSample, TestCase } from '@prisma/client';
+
+export class ProblemSampleResponseDto implements ProblemSample {
+  sampleId: string;
+
+  problemId: string;
+
+  @ApiProperty({
+    example: '2 3',
+    description: 'Входные данные для примера',
+  })
+  input: string;
+
+  @ApiProperty({
+    example: '5',
+    description: 'Выходные данные для примера',
+  })
+  output: string;
+
+  @ApiProperty({
+    example: 'Сумма чисел 2 и 3',
+    description: 'Пояснение к примеру',
+  })
+  explanation: string | null;
+}
+
+export class TestCaseResponseDto implements TestCase {
+  problemId: string;
+
+  testId: string;
+
+  @ApiProperty({
+    example: '10 20',
+    description: 'Входные данные для теста',
+  })
+  input: string;
+
+  @ApiProperty({
+    example: '30',
+    description: 'Ожидаемые выходные данные',
+  })
+  output: string;
+}
 
 export class ProblemResponseDto implements Problem {
   @ApiProperty({ description: 'Уникальный идентификатор задачи' })
@@ -43,7 +85,6 @@ export class ProblemResponseDto implements Problem {
 
   @ApiProperty({
     description: 'Идентификатор создателя задачи',
-    nullable: true,
   })
   createdBy: string | null;
 
@@ -52,4 +93,8 @@ export class ProblemResponseDto implements Problem {
 
   @ApiProperty({ description: 'Дата последнего обновления задачи' })
   updatedAt: Date;
+
+  samples: ProblemSampleResponseDto[];
+
+  testCases: TestCaseResponseDto[];
 }

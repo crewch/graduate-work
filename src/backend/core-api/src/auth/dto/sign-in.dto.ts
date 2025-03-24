@@ -4,7 +4,7 @@ import { IsEmailOrUsername } from '../validators/email-or-username.validator';
 
 export class SignInDto {
   @ApiProperty({
-    example: 'user@example.com или john_doe',
+    example: 'john_doe',
     description: 'Email или имя пользователя',
   })
   @IsString()

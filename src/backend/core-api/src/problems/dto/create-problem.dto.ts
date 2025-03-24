@@ -30,8 +30,6 @@ export class ProblemSampleDto {
   @ApiProperty({
     example: 'Сумма чисел 2 и 3',
     description: 'Пояснение к примеру',
-    nullable: true,
-    required: false,
   })
   @IsString()
   @IsOptional()
@@ -106,7 +104,6 @@ export class CreateProblemDto {
   memoryLimit: number;
 
   @ApiProperty({
-    type: [ProblemSampleDto],
     description: 'Примеры использования',
   })
   @IsArray()
@@ -115,7 +112,6 @@ export class CreateProblemDto {
   samples: ProblemSampleDto[];
 
   @ApiProperty({
-    type: [TestCaseDto],
     description: 'Тестовые случаи',
   })
   @IsArray()

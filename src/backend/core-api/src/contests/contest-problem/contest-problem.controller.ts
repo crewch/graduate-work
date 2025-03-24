@@ -1,8 +1,16 @@
-import { Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, Param, Post } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { ContestProblemService } from './contest-problem.service';
 import { ContestOwner } from '../decorators/contest-owner.decorator';
 import { Auth } from 'src/auth/decorators/auth.decorator';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ContestProblemResponseDto } from './dto/contest-problem-response.dto';
 
 @Auth()
@@ -13,24 +21,22 @@ export class ContestProblemController {
 
   @Get()
   @ApiOperation({ summary: 'Получить все задачи контеста' })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: 'Список задач контеста',
     type: [ContestProblemResponseDto],
   })
-  @ApiResponse({ status: 404, description: 'Контест не найден' })
+  @ApiNotFoundResponse({ description: 'Контест не найден' })
   getProblems(@Param('contestId') contestId: string) {
     return this.contestProblemService.getContestProblems(contestId);
   }
 
   @Get(':problemId')
   @ApiOperation({ summary: 'Получить конкретную задачу контеста' })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: 'Информация о задаче',
     type: ContestProblemResponseDto,
   })
-  @ApiResponse({ status: 404, description: 'Контест/задача не найдены' })
+  @ApiNotFoundResponse({ description: 'Контест/задача не найдены' })
   getProblem(
     @Param('contestId') contestId: string,
     @Param('problemId') problemId: string,
@@ -41,13 +47,12 @@ export class ContestProblemController {
   @Post(':problemId')
   @ContestOwner()
   @ApiOperation({ summary: 'Добавить задачу в контест' })
-  @ApiResponse({
-    status: 201,
+  @ApiCreatedResponse({
     description: 'Задача успешно добавлена',
     type: ContestProblemResponseDto,
   })
-  @ApiResponse({ status: 404, description: 'Контест не найден' })
-  @ApiResponse({ status: 409, description: 'Контест/задача уже добавлена' })
+  @ApiNotFoundResponse({ description: 'Контест не найден' })
+  @ApiConflictResponse({ description: 'Контест/задача уже добавлена' })
   addProblem(
     @Param('contestId') contestId: string,
     @Param('problemId') problemId: string,
@@ -56,10 +61,11 @@ export class ContestProblemController {
   }
 
   @Delete(':problemId')
+  @HttpCode(204)
   @ContestOwner()
   @ApiOperation({ summary: 'Удалить задачу из контеста' })
-  @ApiResponse({ status: 200, description: 'Задача успешно удалена' })
-  @ApiResponse({ status: 404, description: 'Контест/задача не найдены' })
+  @ApiNoContentResponse({ description: 'Задача успешно удалена' })
+  @ApiNotFoundResponse({ description: 'Контест/задача не найдены' })
   async removeProblem(
     @Param('contestId') contestId: string,
     @Param('problemId') problemId: string,

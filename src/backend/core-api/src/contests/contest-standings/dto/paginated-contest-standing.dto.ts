@@ -3,7 +3,7 @@ import { ContestStanding } from '@prisma/client';
 import { UserResponseDto } from 'src/users/dto/user-response.dto';
 
 export class ContestStandingResponseDto implements ContestStanding {
-  @ApiProperty({ example: 'cl123' })
+  @ApiProperty({ example: '12312312312' })
   contestId: string;
 
   @ApiProperty({ example: 'user123' })
@@ -18,12 +18,10 @@ export class ContestStandingResponseDto implements ContestStanding {
   @ApiProperty({ example: 45 })
   penalty: number;
 
-  @ApiProperty({ type: () => UserResponseDto })
   user: UserResponseDto;
 }
 
 export class PaginatedContestStandingsDto {
-  @ApiProperty({ type: [ContestStandingResponseDto] })
   standings: ContestStandingResponseDto[];
 
   @ApiProperty({ example: 50 })

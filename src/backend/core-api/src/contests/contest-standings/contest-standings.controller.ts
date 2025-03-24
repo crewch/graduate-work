@@ -1,7 +1,13 @@
-import { Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Controller, Get, HttpCode, Param, Post, Query } from '@nestjs/common';
 import { ContestStandingsService } from './contest-standings.service';
 import { Auth } from 'src/auth/decorators/auth.decorator';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { GetStandingsDto } from './dto/get-contest-standings.dto';
 import { PaginatedContestStandingsDto } from './dto/paginated-contest-standing.dto';
 
@@ -15,8 +21,7 @@ export class ContestStandingsController {
 
   @Get()
   @ApiOperation({ summary: 'Получить таблицу лидеров контеста' })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: 'Успех',
     type: [PaginatedContestStandingsDto],
   })
@@ -32,10 +37,10 @@ export class ContestStandingsController {
   }
 
   @Post('recalculate')
+  @HttpCode(204)
   @ApiOperation({ summary: 'Пересчитать таблицу лидеров контеста' })
-  @ApiResponse({ status: 201 })
-  @ApiResponse({
-    status: 404,
+  @ApiNoContentResponse()
+  @ApiNotFoundResponse({
     description: 'Контест не найден',
   })
   async recalculate(@Param('contestId') contestId: string) {

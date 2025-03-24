@@ -1,14 +1,47 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { $Enums, Contest } from '@prisma/client';
+import { Contest, ContestStatus } from '@prisma/client';
+import { UserResponseDto } from 'src/users/dto/user-response.dto';
 
-export class ContestResponseDto implements Contest {
+class ContestProblem {
+  contestId: string;
+
+  problemId: string;
+
+  problemIndex: string;
+}
+
+class ContestStanding {
+  contestId: string;
+
+  problemId: string;
+
+  problemIndex: string;
+
+  penalty: number;
+
+  problemsSolved: number;
+
+  rank: number;
+
+  userId: string;
+
+  user: UserResponseDto;
+}
+
+export class GetContestResponseDto implements Contest {
   @ApiProperty({ description: 'Уникальный идентификатор контеста' })
   contestId: string;
 
-  @ApiProperty({ description: 'Название контеста' })
+  @ApiProperty({
+    description: 'Название контеста',
+    example: 'Осенний контест 2024',
+  })
   title: string;
 
-  @ApiProperty({ description: 'Подробное описание контеста' })
+  @ApiProperty({
+    description: 'Подробное описание контеста',
+    example: 'Контест для начинающих разработчиков',
+  })
   description: string;
 
   @ApiProperty({
@@ -25,16 +58,14 @@ export class ContestResponseDto implements Contest {
 
   @ApiProperty({
     description: 'Текущий статус контеста',
-    enum: $Enums.ContestStatus,
+    enum: ContestStatus,
     example: 'ACTIVE',
   })
-  status: $Enums.ContestStatus;
+  status: ContestStatus;
 
   @ApiProperty({
     description: 'ID создателя контеста',
     example: 'cm8m45vli0083s9rvmsn',
-    nullable: true,
-    required: false,
   })
   createdBy: string | null;
 
@@ -49,4 +80,8 @@ export class ContestResponseDto implements Contest {
     example: '2024-01-01T09:00:00Z',
   })
   createdAt: Date;
+
+  problems: ContestProblem[];
+
+  standings: ContestStanding[];
 }

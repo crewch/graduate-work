@@ -6,12 +6,19 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/user.decorator';
 import { UserResponseDto } from './dto/user-response.dto';
@@ -24,7 +31,7 @@ export class UsersController {
 
   @Post()
   @ApiOperation({ summary: 'Создать нового пользователя' })
-  @ApiResponse({ status: 201, type: UserResponseDto })
+  @ApiCreatedResponse({ type: UserResponseDto })
   async create(@Body() dto: CreateUserDto) {
     const user = await this.usersService.create(dto);
 
@@ -33,7 +40,7 @@ export class UsersController {
 
   @Get()
   @ApiOperation({ summary: 'Получить всех пользователей' })
-  @ApiResponse({ status: 200, type: [UserResponseDto] })
+  @ApiOkResponse({ type: [UserResponseDto] })
   async findAll() {
     const users = await this.usersService.findAll();
 
@@ -42,14 +49,14 @@ export class UsersController {
 
   @Get('profile')
   @ApiOperation({ summary: 'Получить текущего пользователя' })
-  @ApiResponse({ status: 200, type: UserResponseDto })
+  @ApiOkResponse({ type: UserResponseDto })
   getProfile(@CurrentUser() user: User) {
     return new UserResponseDto(user);
   }
 
   @Patch('profile')
   @ApiOperation({ summary: 'Обновить данные текущего пользователя' })
-  @ApiResponse({ status: 200, type: UserResponseDto })
+  @ApiOkResponse({ type: UserResponseDto })
   async updateProfile(
     @CurrentUser('userId') userId: string,
     @Body() dto: UpdateUserDto,
@@ -60,15 +67,16 @@ export class UsersController {
   }
 
   @Delete('profile')
+  @HttpCode(204)
   @ApiOperation({ summary: 'Удалить текущего пользователя' })
-  @ApiResponse({ status: 204 })
+  @ApiNoContentResponse()
   async removeProfile(@CurrentUser('userId') userId: string) {
     await this.usersService.remove(userId);
   }
 
   @Get(':userId')
   @ApiOperation({ summary: 'Получить пользователя по ID' })
-  @ApiResponse({ status: 200, type: UserResponseDto })
+  @ApiOkResponse({ type: UserResponseDto })
   async findOne(@Param('userId') userId: string) {
     const user = await this.usersService.findById(userId);
 
@@ -77,7 +85,7 @@ export class UsersController {
 
   @Patch(':userId')
   @ApiOperation({ summary: 'Обновить данные пользователя по ID' })
-  @ApiResponse({ status: 200, type: UserResponseDto })
+  @ApiOkResponse({ type: UserResponseDto })
   async update(@Param('userId') userId: string, @Body() dto: UpdateUserDto) {
     const user = await this.usersService.update(userId, dto);
 
@@ -85,8 +93,9 @@ export class UsersController {
   }
 
   @Delete(':userId')
+  @HttpCode(204)
   @ApiOperation({ summary: 'Удалить пользователя по ID' })
-  @ApiResponse({ status: 204 })
+  @ApiNoContentResponse()
   async remove(@Param('userId') userId: string) {
     await this.usersService.remove(userId);
   }
