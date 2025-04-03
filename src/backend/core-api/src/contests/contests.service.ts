@@ -50,7 +50,7 @@ export class ContestsService {
   }
 
   async findAll(page: number = 1, pageSize: number = 10) {
-    const [contests, total] = await Promise.all([
+    const [contests, total] = await this.prismaService.$transaction([
       this.prismaService.contest.findMany({
         skip: (page - 1) * pageSize,
         take: pageSize,

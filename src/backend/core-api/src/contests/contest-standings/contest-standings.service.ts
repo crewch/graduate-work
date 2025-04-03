@@ -9,7 +9,7 @@ export class ContestStandingsService {
   async getStandings(contestId: string, page = 1, pageSize = 10) {
     const skip = (page - 1) * pageSize;
 
-    const [standings, total] = await Promise.all([
+    const [standings, total] = await this.prismaService.$transaction([
       this.prismaService.contestStanding.findMany({
         where: {
           contestId,
