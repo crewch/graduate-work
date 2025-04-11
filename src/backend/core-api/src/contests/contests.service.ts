@@ -55,6 +55,9 @@ export class ContestsService {
         skip: (page - 1) * pageSize,
         take: pageSize,
         include: { creator: { omit: { passwordHash: true } } },
+        orderBy: {
+          createdAt: 'desc',
+        },
       }),
       this.prismaService.contest.count(),
     ]);
@@ -62,8 +65,8 @@ export class ContestsService {
     return { contests, total };
   }
 
-  async findById(contestId: string) {
-    const contest = await this.prismaService.contest.findUnique({
+  findById(contestId: string) {
+    return this.prismaService.contest.findUnique({
       where: {
         contestId,
       },
@@ -72,12 +75,6 @@ export class ContestsService {
         standings: { include: { user: { omit: { passwordHash: true } } } },
       },
     });
-
-    if (!contest) {
-      throw new NotFoundException('Контест не найден');
-    }
-
-    return contest;
   }
 
   async update(contestId: string, dto: UpdateContestDto) {

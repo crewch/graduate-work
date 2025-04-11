@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   HttpCode,
+  NotFoundException,
 } from '@nestjs/common';
 import { ProblemsService } from './problems.service';
 import { CreateProblemDto } from './dto/create-problem.dto';
@@ -50,8 +51,14 @@ export class ProblemsController {
   @ApiOperation({ summary: 'Получить задачу по ID' })
   @ApiOkResponse({ type: ProblemResponseDto })
   @ApiNotFoundResponse()
-  findById(@Param('problemId') problemId: string) {
-    return this.problemsService.findOne(problemId);
+  async findById(@Param('problemId') problemId: string) {
+    const problem = await this.problemsService.findOne(problemId);
+
+    if (!problem) {
+      throw new NotFoundException('Задача не найдена');
+    }
+
+    return problem;
   }
 
   @Patch(':problemId')

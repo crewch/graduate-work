@@ -28,7 +28,7 @@ export class CreateContestDto {
 
   @ApiProperty({
     description: 'Дата и время начала контеста',
-    example: '2024-01-01T10:00:00Z',
+    example: '2025-10-01T10:00:00Z',
   })
   @IsDate()
   @Type(() => Date)
@@ -36,7 +36,7 @@ export class CreateContestDto {
 
   @ApiProperty({
     description: 'Дата и время окончания контеста',
-    example: '2024-01-01T14:00:00Z',
+    example: '2025-10-01T14:00:00Z',
   })
   @IsDate()
   @Type(() => Date)

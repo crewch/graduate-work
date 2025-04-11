@@ -1,4 +1,12 @@
-import { Controller, Delete, Get, HttpCode, Param, Post } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  NotFoundException,
+  Param,
+  Post,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiConflictResponse,
@@ -37,11 +45,22 @@ export class ContestProblemController {
     type: ContestProblemResponseDto,
   })
   @ApiNotFoundResponse({ description: 'Контест/задача не найдены' })
-  getProblem(
+  async getProblem(
     @Param('contestId') contestId: string,
     @Param('problemId') problemId: string,
   ) {
-    return this.contestProblemService.getContestProblem(contestId, problemId);
+    const problem = await this.contestProblemService.getContestProblem(
+      contestId,
+      problemId,
+    );
+
+    if (!problem) {
+      throw new NotFoundException(
+        'Задача не найдена или контест не существует',
+      );
+    }
+
+    return problem;
   }
 
   @Post(':problemId')

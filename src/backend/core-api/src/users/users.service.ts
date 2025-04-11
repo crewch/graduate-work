@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { hash } from 'argon2';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,28 +20,20 @@ export class UsersService {
     return this.prismaService.user.findMany();
   }
 
-  async findById(userId: string) {
-    const user = await this.prismaService.user.findUnique({
+  findById(userId: string) {
+    return this.prismaService.user.findUnique({
       where: {
         userId,
       },
     });
-
-    if (!user) {
-      throw new NotFoundException('Пользователь не найден');
-    }
-
-    return user;
   }
 
-  async findByLogin(login: string) {
-    const user = await this.prismaService.user.findFirst({
+  findByLogin(login: string) {
+    return this.prismaService.user.findFirst({
       where: {
         OR: [{ username: login }, { email: login }],
       },
     });
-
-    return user;
   }
 
   async update(userId: string, dto: UpdateUserDto) {
@@ -58,14 +50,27 @@ export class UsersService {
   }
 
   async remove(userId: string) {
-    const deletedUser = await this.prismaService.user.delete({
+    return this.prismaService.user.delete({
       where: { userId },
     });
+  }
 
-    if (!deletedUser) {
-      throw new NotFoundException('Пользователь не найден');
-    }
+  async getGlobalRatings(page: number = 1, pageSize: number = 10) {
+    const [contests, total] = await this.prismaService.$transaction([
+      this.prismaService.user.findMany({
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        select: {
+          username: true,
+          rating: true,
+        },
+        orderBy: {
+          rating: 'desc',
+        },
+      }),
+      this.prismaService.contest.count(),
+    ]);
 
-    return deletedUser;
+    return { contests, total };
   }
 }

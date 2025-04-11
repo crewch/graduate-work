@@ -58,16 +58,7 @@ export class ContestProblemService {
     });
   }
 
-  async getContestProblems(contestId: string) {
-    const contestExists = await this.prismaService.contest.count({
-      where: { contestId },
-      take: 1,
-    });
-
-    if (!contestExists) {
-      throw new NotFoundException('Контест не найден');
-    }
-
+  getContestProblems(contestId: string) {
     return this.prismaService.contestProblem.findMany({
       where: {
         contestId,
@@ -77,21 +68,13 @@ export class ContestProblemService {
     });
   }
 
-  async getContestProblem(contestId: string, problemId: string) {
-    const problem = await this.prismaService.contestProblem.findUnique({
+  getContestProblem(contestId: string, problemId: string) {
+    return this.prismaService.contestProblem.findUnique({
       where: {
         contestId_problemId: { contestId, problemId },
       },
       include: { problem: true },
     });
-
-    if (!problem) {
-      throw new NotFoundException(
-        'Задача не найдена или контест не существует',
-      );
-    }
-
-    return problem;
   }
 
   removeContestProblem(contestId: string, problemId: string) {

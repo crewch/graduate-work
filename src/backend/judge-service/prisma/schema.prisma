@@ -1,0 +1,173 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Contest {
+  contestId   String        @id @default(cuid()) @map("contest_id")
+  title       String
+  description String
+  startTime   DateTime      @map("start_time")
+  endTime     DateTime      @map("end_time")
+  status      ContestStatus @default(UPCOMING)
+  createdBy   String?       @map("created_by")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  problems    ContestProblem[]
+  submissions Submission[]
+  standings   ContestStanding[]
+
+  creator User? @relation(fields: [createdBy], references: [userId], onDelete: SetNull)
+
+  @@map("contests")
+}
+
+model ContestProblem {
+  contestId    String @map("contest_id")
+  problemId    String @map("problem_id")
+  problemIndex String @map("problem_index")
+
+  contest Contest @relation(fields: [contestId], references: [contestId], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [problemId], onDelete: Cascade)
+
+  @@id([contestId, problemId])
+  @@map("contest_problems")
+}
+
+model ContestStanding {
+  contestId      String @map("contest_id")
+  userId         String @map("user_id")
+  rank           Int
+  problemsSolved Int    @map("problems_solved")
+  penalty        Int
+
+  contest Contest @relation(fields: [contestId], references: [contestId], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@id([contestId, userId])
+  @@map("contest_standings")
+}
+
+model Problem {
+  problemId    String   @id @default(cuid()) @map("problem_id")
+  title        String
+  description  String
+  inputFormat  String   @map("input_format")
+  outputFormat String   @map("output_format")
+  timeLimit    Int      @map("time_limit")
+  memoryLimit  Int      @map("memory_limit")
+  createdBy    String?  @map("created_by")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  contests    ContestProblem[]
+  samples     ProblemSample[]
+  testCases   TestCase[]
+  submissions Submission[]
+
+  creator User? @relation(fields: [createdBy], references: [userId], onDelete: SetNull)
+
+  @@map("problems")
+}
+
+model User {
+  userId       String   @id @default(cuid()) @map("user_id")
+  username     String   @unique
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  rating       Int      @default(0)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  submissions Submission[]
+  standings   ContestStanding[]
+
+  createdContests Contest[]
+  createdProblems Problem[]
+
+  @@map("users")
+}
+
+model TestCase {
+  testId    String @id @default(cuid()) @map("test_id")
+  problemId String @map("problem_id")
+  input     String @map("input")
+  output    String @map("output")
+
+  submissionResults SubmissionResult[]
+
+  problem Problem @relation(fields: [problemId], references: [problemId], onDelete: Cascade)
+
+  @@map("test_cases")
+}
+
+model SubmissionResult {
+  submissionId  String           @map("submission_id")
+  testId        String           @map("test_id")
+  status        SubmissionStatus
+  errorMessage  String?          @map("error_message")
+  executionTime Int?             @map("execution_time")
+  memoryUsed    Int?             @map("memory_used")
+
+  submission Submission @relation(fields: [submissionId], references: [submissionId], onDelete: Cascade)
+  testCase   TestCase   @relation(fields: [testId], references: [testId], onDelete: Cascade)
+
+  @@id([submissionId, testId])
+  @@map("submission_results")
+}
+
+model Submission {
+  submissionId   String              @id @default(cuid()) @map("submission_id")
+  userId         String              @map("user_id")
+  contestId      String              @map("contest_id")
+  problemId      String              @map("problem_id")
+  language       ProgrammingLanguage
+  code           String
+  submissionTime DateTime            @default(now()) @map("submission_time")
+  verdict        SubmissionStatus
+
+  results SubmissionResult[]
+
+  user    User    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  contest Contest @relation(fields: [contestId], references: [contestId], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [problemId], onDelete: Cascade)
+
+  @@map("submissions")
+}
+
+model ProblemSample {
+  sampleId    String  @id @default(cuid()) @map("sample_id")
+  problemId   String  @map("problem_id")
+  input       String  @map("input")
+  output      String  @map("output")
+  explanation String? @map("explanation")
+
+  problem Problem @relation(fields: [problemId], references: [problemId], onDelete: Cascade)
+
+  @@map("problem_samples")
+}
+
+enum ContestStatus {
+  UPCOMING
+  ONGOING
+  FINISHED
+}
+
+enum ProgrammingLanguage {
+  PYTHON
+  JAVASCRIPT
+}
+
+enum SubmissionStatus {
+  ACCEPTED
+  PENDING
+  FAILED
+  WRONG_ANSWER
+  TIME_LIMIT_EXCEEDED
+  MEMORY_LIMIT_EXCEEDED
+}

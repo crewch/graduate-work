@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -98,6 +99,10 @@ export class AuthService {
     await this.tokenStorageService.deleteToken(refreshToken);
 
     const user = await this.usersService.findById(result.sub);
+
+    if (!user) {
+      throw new NotFoundException('Пользователь не найден');
+    }
 
     const tokens = await this.issueTokens(result.sub);
 

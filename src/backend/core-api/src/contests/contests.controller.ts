@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   HttpCode,
+  NotFoundException,
 } from '@nestjs/common';
 import { ContestsService } from './contests.service';
 import { CreateContestDto } from './dto/create-contest.dto';
@@ -71,8 +72,14 @@ export class ContestsController {
   @ApiNotFoundResponse({
     description: 'Контест не найден',
   })
-  findOne(@Param('contestId') contestId: string) {
-    return this.contestService.findById(contestId);
+  async findOne(@Param('contestId') contestId: string) {
+    const contest = await this.contestService.findById(contestId);
+
+    if (!contest) {
+      throw new NotFoundException('Контест не найден');
+    }
+
+    return contest;
   }
 
   @Patch(':contestId')

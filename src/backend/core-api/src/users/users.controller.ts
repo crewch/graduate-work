@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   HttpCode,
+  NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { UsersService } from './users.service';
@@ -22,6 +24,8 @@ import {
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/user.decorator';
 import { UserResponseDto } from './dto/user-response.dto';
+import { RatingResponseDto } from './dto/ratings-reponse.dto';
+import { GetRatingsDto } from './dto/get-ratings.dto';
 
 @Auth()
 @ApiBearerAuth()
@@ -74,11 +78,22 @@ export class UsersController {
     await this.usersService.remove(userId);
   }
 
+  @Get('ratings')
+  @ApiOperation({ summary: 'Получить глобальный рейтинг' })
+  @ApiOkResponse({ type: [RatingResponseDto] })
+  getGlobalRatings(@Query() dto: GetRatingsDto) {
+    return this.usersService.getGlobalRatings(dto.page, dto.pageSize);
+  }
+
   @Get(':userId')
   @ApiOperation({ summary: 'Получить пользователя по ID' })
   @ApiOkResponse({ type: UserResponseDto })
   async findOne(@Param('userId') userId: string) {
     const user = await this.usersService.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException('Пользователь не найден');
+    }
 
     return new UserResponseDto(user);
   }

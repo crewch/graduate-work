@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateProblemDto } from './dto/create-problem.dto';
 import { UpdateProblemDto } from './dto/update-problem.dto';
 import { PrismaService } from 'nestjs-prisma';
@@ -46,17 +46,11 @@ export class ProblemsService {
     });
   }
 
-  async findOne(problemId: string) {
-    const problem = await this.prismaService.problem.findUnique({
+  findOne(problemId: string) {
+    return this.prismaService.problem.findUnique({
       where: { problemId },
       include: { samples: true, testCases: true },
     });
-
-    if (!problem) {
-      throw new NotFoundException('Задача не найдена');
-    }
-
-    return problem;
   }
 
   async update(problemId: string, dto: UpdateProblemDto) {
