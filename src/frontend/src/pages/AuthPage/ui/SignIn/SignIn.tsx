@@ -49,7 +49,6 @@ export const SignIn = () => {
 		onError: (e: AxiosError<Error>) => {
 			toast.error('Ошибка входа', {
 				description: e.response?.data.message,
-				duration: 3000,
 			})
 			form.reset()
 		},

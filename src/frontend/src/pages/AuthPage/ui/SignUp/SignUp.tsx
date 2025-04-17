@@ -50,7 +50,6 @@ export const SignUp = () => {
 		onError: (e: AxiosError<Error>) => {
 			toast.error('Ошибка регистрации', {
 				description: e.response?.data.message,
-				duration: 3000,
 			})
 			form.reset()
 		},
