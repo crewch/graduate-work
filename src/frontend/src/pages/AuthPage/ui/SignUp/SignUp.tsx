@@ -1,5 +1,6 @@
 'use client'
 
+import { DASHBOARD_PAGES } from '@/shared/config/pages-url.config'
 import { authService, SignUpDto } from '@/shared/services/auth'
 import {
 	Card,
@@ -24,30 +25,10 @@ import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
-
-const formSchema = z.object({
-	username: z
-		.string()
-		.min(3, {
-			message: 'Строка должна содержать не менее 3 символов',
-		})
-		.max(16, {
-			message: 'Строка должна содержать не более 16 символов',
-		}),
-	email: z.string().email({
-		message: 'Неверный адрес электронной почты',
-	}),
-	password: z
-		.string()
-		.min(6, { message: 'Строка должна содержать не менее 6 символов' })
-		.max(50, {
-			message: 'Строка должна содержать не более 50 символов',
-		}),
-})
+import { formSchema, SignUpFormValues } from './types'
 
 export const SignUp = () => {
-	const form = useForm<z.infer<typeof formSchema>>({
+	const form = useForm<SignUpFormValues>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			username: '',
@@ -64,7 +45,7 @@ export const SignUp = () => {
 		onSuccess: () => {
 			toast.success('Успешная регистрация!')
 			form.reset()
-			push('/i')
+			push(DASHBOARD_PAGES.CONTESTS)
 		},
 		onError: (e: AxiosError<Error>) => {
 			toast.error('Ошибка регистрации', {
@@ -75,7 +56,7 @@ export const SignUp = () => {
 		},
 	})
 
-	const onSubmit = (values: z.infer<typeof formSchema>) => {
+	const onSubmit = (values: SignUpFormValues) => {
 		mutate(values)
 	}
 

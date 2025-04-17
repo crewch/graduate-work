@@ -80,7 +80,7 @@ export class UsersController {
 
   @Get('ratings')
   @ApiOperation({ summary: 'Получить глобальный рейтинг' })
-  @ApiOkResponse({ type: [RatingResponseDto] })
+  @ApiOkResponse({ type: RatingResponseDto })
   getGlobalRatings(@Query() dto: GetRatingsDto) {
     return this.usersService.getGlobalRatings(dto.page, dto.pageSize);
   }

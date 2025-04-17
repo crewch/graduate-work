@@ -21,30 +21,14 @@ import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { AxiosError } from 'axios'
-
-const formSchema = z.object({
-	login: z
-		.string()
-		.min(3, {
-			message: 'Строка должна содержать не менее 3 символов',
-		})
-		.max(256, {
-			message: 'Строка должна содержать не более 256 символов',
-		}),
-	password: z
-		.string()
-		.min(6, { message: 'Строка должна содержать не менее 6 символов' })
-		.max(50, {
-			message: 'Строка должна содержать не более 50 символов',
-		}),
-})
+import { DASHBOARD_PAGES } from '@/shared/config/pages-url.config'
+import { formSchema, SignInFormValues } from './types'
 
 export const SignIn = () => {
-	const form = useForm<z.infer<typeof formSchema>>({
+	const form = useForm<SignInFormValues>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			login: '',
@@ -60,7 +44,7 @@ export const SignIn = () => {
 		onSuccess: () => {
 			toast.success('Успешный вход в систему!')
 			form.reset()
-			push('/i')
+			push(DASHBOARD_PAGES.CONTESTS)
 		},
 		onError: (e: AxiosError<Error>) => {
 			toast.error('Ошибка входа', {
@@ -71,7 +55,7 @@ export const SignIn = () => {
 		},
 	})
 
-	const onSubmit = (values: z.infer<typeof formSchema>) => {
+	const onSubmit = (values: SignInFormValues) => {
 		mutate(values)
 	}
 

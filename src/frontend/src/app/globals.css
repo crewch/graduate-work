@@ -125,4 +125,18 @@
 	[role='button']:disabled {
 		cursor: default;
 	}
+	::-webkit-scrollbar {
+		width: 8px;
+	}
+	::-webkit-scrollbar-track {
+		background: #d1d1d1;
+		border-radius: 10px;
+	}
+	::-webkit-scrollbar-thumb {
+		background: #888;
+		border-radius: 10px;
+	}
+	::-webkit-scrollbar-thumb:hover {
+		background: #555;
+	}
 }

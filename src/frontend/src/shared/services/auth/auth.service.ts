@@ -6,35 +6,35 @@ class AuthService {
 	private BASE_URL = '/auth'
 
 	async signIn(dto: SignInDto) {
-		const response = await baseApi.post<AuthResponseDto>(
+		const { data } = await baseApi.post<AuthResponseDto>(
 			`${this.BASE_URL}/sign-in`,
 			dto
 		)
 
-		saveAccessToken(response.data.accessToken)
+		saveAccessToken(data.accessToken)
 
-		return response
+		return data
 	}
 
 	async signUp(dto: SignUpDto) {
-		const response = await baseApi.post<AuthResponseDto>(
+		const { data } = await baseApi.post<AuthResponseDto>(
 			`${this.BASE_URL}/sign-up`,
 			dto
 		)
 
-		saveAccessToken(response.data.accessToken)
+		saveAccessToken(data.accessToken)
 
-		return response
+		return data
 	}
 
 	async getNewTokens() {
-		const response = await baseApi.post<AuthResponseDto>(
+		const { data } = await baseApi.post<AuthResponseDto>(
 			`${this.BASE_URL}/sign-in/access-token`
 		)
 
-		saveAccessToken(response.data.accessToken)
+		saveAccessToken(data.accessToken)
 
-		return response
+		return data
 	}
 
 	async signOut() {

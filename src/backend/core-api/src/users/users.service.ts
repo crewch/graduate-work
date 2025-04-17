@@ -68,7 +68,7 @@ export class UsersService {
           rating: 'desc',
         },
       }),
-      this.prismaService.contest.count(),
+      this.prismaService.user.count(),
     ]);
 
     return { contests, total };
