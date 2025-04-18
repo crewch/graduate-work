@@ -41,8 +41,8 @@ export const CreateProblemPage = () => {
 		},
 	})
 
-	const { mutate } = useMutation({
-		mutationKey: ['createProblem'],
+	const { mutate, isPending } = useMutation({
+		mutationKey: ['create-problem'],
 		mutationFn: (data: CreateProblemFormValues) =>
 			problemsService.createProblem(data),
 		onSuccess: () => {
@@ -355,10 +355,8 @@ export const CreateProblemPage = () => {
 						</div>
 					</CardContent>
 					<CardFooter>
-						<Button type="submit" disabled={form.formState.isSubmitting}>
-							{form.formState.isSubmitting && (
-								<Loader2 className="animate-spin mr-2" />
-							)}
+						<Button type="submit" disabled={isPending}>
+							{isPending && <Loader2 className="animate-spin mr-2" />}
 							Создать задачу
 						</Button>
 					</CardFooter>

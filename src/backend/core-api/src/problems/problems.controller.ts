@@ -25,7 +25,10 @@ import {
 import { CurrentUser } from 'src/auth/decorators/user.decorator';
 import { ProblemOwner } from './decorators/problem-owner.decorator';
 import { GetProblemsDto } from './dto/get-problems.dto';
-import { ProblemResponseDto } from './dto/problem-response.dto';
+import {
+  GetProblemsResponseDto,
+  ProblemResponseDto,
+} from './dto/problem-response.dto';
 
 @Auth()
 @ApiBearerAuth()
@@ -42,7 +45,7 @@ export class ProblemsController {
 
   @Get()
   @ApiOperation({ summary: 'Получить список задач' })
-  @ApiOkResponse({ type: [ProblemResponseDto] })
+  @ApiOkResponse({ type: GetProblemsResponseDto })
   findAll(@Query() dto: GetProblemsDto) {
     return this.problemsService.findAll(dto.page, dto.pageSize);
   }

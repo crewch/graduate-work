@@ -36,7 +36,7 @@ export interface Standing {
 	user: User
 }
 
-export interface Problem {
+export interface ProblemResponseDto {
 	contestId: string
 	problemId: string
 	problemIndex: string
@@ -52,6 +52,6 @@ export interface GetContestResponseDto {
 	createdBy: string
 	updatedAt: string
 	createdAt: string
-	problems: Problem[]
+	problems: ProblemResponseDto[]
 	standings: Standing[]
 }

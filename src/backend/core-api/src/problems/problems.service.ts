@@ -35,15 +35,18 @@ export class ProblemsService {
     });
   }
 
-  findAll(page = 1, pageSize = 10) {
-    const skip = (page - 1) * pageSize;
+  async findAll(page = 1, pageSize = 10) {
+    const [problems, total] = await this.prismaService.$transaction([
+      this.prismaService.problem.findMany({
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: { samples: true },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prismaService.problem.count(),
+    ]);
 
-    return this.prismaService.problem.findMany({
-      skip,
-      take: pageSize,
-      include: { samples: true, testCases: true },
-      orderBy: { createdAt: 'desc' },
-    });
+    return { problems, total };
   }
 
   findOne(problemId: string) {

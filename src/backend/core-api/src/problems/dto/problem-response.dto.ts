@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Problem, ProblemSample, TestCase } from '@prisma/client';
+import { Problem, ProblemSample } from '@prisma/client';
 
 export class ProblemSampleResponseDto implements ProblemSample {
   sampleId: string;
@@ -23,24 +23,6 @@ export class ProblemSampleResponseDto implements ProblemSample {
     description: 'Пояснение к примеру',
   })
   explanation: string | null;
-}
-
-export class TestCaseResponseDto implements TestCase {
-  problemId: string;
-
-  testId: string;
-
-  @ApiProperty({
-    example: '10 20',
-    description: 'Входные данные для теста',
-  })
-  input: string;
-
-  @ApiProperty({
-    example: '30',
-    description: 'Ожидаемые выходные данные',
-  })
-  output: string;
 }
 
 export class ProblemResponseDto implements Problem {
@@ -95,6 +77,9 @@ export class ProblemResponseDto implements Problem {
   updatedAt: Date;
 
   samples: ProblemSampleResponseDto[];
+}
 
-  testCases: TestCaseResponseDto[];
+export class GetProblemsResponseDto {
+  problems: ProblemResponseDto[];
+  total: number;
 }
