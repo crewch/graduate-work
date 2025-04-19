@@ -23,7 +23,7 @@ export class AuthService {
   private readonly COOKIE_OPTIONS: CookieOptions = {
     httpOnly: true,
     secure: false, // todo настроить когда будет https `this.IS_PRODUCTION`
-    sameSite: this.IS_PRODUCTION ? 'lax' : 'none',
+    sameSite: 'lax',
     domain: this.IS_PRODUCTION ? process.env.DOMAIN_PROD : 'localhost',
   };
 
