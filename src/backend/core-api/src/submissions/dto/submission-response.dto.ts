@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   ProgrammingLanguage,
-  Submission,
   SubmissionResult,
   SubmissionStatus,
 } from '@prisma/client';
@@ -43,9 +42,14 @@ export class SubmissionResultDto implements SubmissionResult {
     description: 'Результат проверки',
   })
   status: SubmissionStatus;
+
+  @ApiProperty({
+    example: '2024-01-01T09:00:00Z',
+  })
+  createdAt: Date;
 }
 
-export class SubmissionResponseDto implements Submission {
+export class SubmissionResponseDto {
   @ApiProperty({
     example: 'console.log("Hello World!");',
     description: 'Исходный код решения',
@@ -96,5 +100,5 @@ export class SubmissionResponseDto implements Submission {
   })
   verdict: SubmissionStatus;
 
-  results: SubmissionResultDto[];
+  lastResult: SubmissionResultDto;
 }

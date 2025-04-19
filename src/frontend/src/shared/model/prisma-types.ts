@@ -86,6 +86,7 @@ export interface SubmissionResult {
 	errorMessage?: string | null
 	executionTime?: number | null
 	memoryUsed?: number | null
+	createdAt: Date
 }
 
 export interface Submission {

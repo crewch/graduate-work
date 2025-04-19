@@ -129,6 +129,7 @@ export class JudgeService {
       executionTime: null,
       memoryUsed: null,
       errorMessage: null,
+      createdAt: new Date(),
     };
 
     const container = this.docker.getContainer(containerId);

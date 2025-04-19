@@ -1,5 +1,6 @@
 'use client'
 
+import { FC } from 'react'
 import { contestService } from '@/shared/services/contests'
 import {
 	Button,
@@ -13,7 +14,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { Loader } from 'lucide-react'
 import Link from 'next/link'
-import { FC } from 'react'
+import { SendSubmissionDialog } from '../SendSubmissionDialog'
 
 interface ProblemDetailsPageProps {
 	contestId: string
@@ -27,6 +28,7 @@ export const ProblemDetailsPage: FC<ProblemDetailsPageProps> = ({
 	const { data, isSuccess, isLoading } = useQuery({
 		queryKey: ['get-contest-problem', contestId, problemId],
 		queryFn: () => contestService.getContestProblem(contestId, problemId),
+		refetchInterval: 5000,
 	})
 
 	return (
@@ -49,9 +51,14 @@ export const ProblemDetailsPage: FC<ProblemDetailsPageProps> = ({
 								</p>
 							</CardDescription>
 						</div>
-						<Button asChild>
-							<Link href={'..'}>Назад</Link>
-						</Button>
+						<div className="space-x-4">
+							<SendSubmissionDialog contestId={contestId} problemId={problemId}>
+								<Button>Отправить решение</Button>
+							</SendSubmissionDialog>
+							<Button asChild>
+								<Link href={'..'}>Назад</Link>
+							</Button>
+						</div>
 					</CardHeader>
 					<CardContent className="flex flex-col gap-4 max-h-160 overflow-auto">
 						<p>{data.problem.description}</p>

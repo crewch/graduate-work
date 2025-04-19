@@ -32,7 +32,12 @@ export class SubmissionsService {
         submissionTime: 'desc',
       },
       include: {
-        results: true,
+        results: {
+          take: 1,
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
       },
     });
   }

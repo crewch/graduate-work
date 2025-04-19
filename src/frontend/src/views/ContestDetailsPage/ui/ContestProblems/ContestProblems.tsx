@@ -29,6 +29,7 @@ export const ContestProblems: FC<ContestProblemsProps> = ({ contestId }) => {
 	const { data, isSuccess, isLoading } = useQuery({
 		queryKey: ['get-contest-problems', contestId],
 		queryFn: () => contestService.getContestProblems(contestId),
+		refetchInterval: 5000,
 	})
 
 	return (
