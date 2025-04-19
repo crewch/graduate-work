@@ -31,7 +31,6 @@ import { ContestCreatedResponseDto } from './dto/contest-created-response.dto';
 import { ContestOwner } from './decorators/contest-owner.decorator';
 import { GetContestResponseDto } from './dto/get-contest-response.dto';
 import { GetContestPaginatedResponseDto } from './dto/get-contest-paginated-response.dto';
-import { ContestStandingResponseDto } from './dto/contest-standing-response.dto';
 
 @Auth()
 @ApiBearerAuth()
@@ -108,12 +107,10 @@ export class ContestsController {
   }
 
   @Post(':contestId/register')
-  @HttpCode(200)
   @ApiOperation({ summary: 'Зарегистрироваться на контест' })
   @ApiParam({ name: 'contestId', description: 'ID контеста' })
-  @ApiOkResponse({
+  @ApiCreatedResponse({
     description: 'Успешная регистрация',
-    type: ContestStandingResponseDto,
   })
   @ApiNotFoundResponse({
     description: 'Контест не найден',
@@ -121,10 +118,10 @@ export class ContestsController {
   @ApiBadRequestResponse({
     description: 'Контест завершен',
   })
-  register(
+  async register(
     @CurrentUser('userId') userId: string,
     @Param('contestId') contestId: string,
   ) {
-    return this.contestService.registerParticipant(contestId, userId);
+    await this.contestService.registerParticipant(contestId, userId);
   }
 }

@@ -70,10 +70,6 @@ export class ContestsService {
       where: {
         contestId,
       },
-      include: {
-        problems: true,
-        standings: { include: { user: { omit: { passwordHash: true } } } },
-      },
     });
   }
 
@@ -115,14 +111,20 @@ export class ContestsService {
       throw new NotFoundException('Контест не найден');
     }
 
+    const participant = await this.prismaService.contestStanding.findUnique({
+      where: { contestId_userId: { contestId, userId } },
+    });
+
+    if (participant) {
+      return;
+    }
+
     if (contest.status === 'FINISHED') {
       throw new BadRequestException('Контест завершен');
     }
 
-    return this.prismaService.contestStanding.upsert({
-      where: { contestId_userId: { contestId, userId } },
-      update: {},
-      create: {
+    await this.prismaService.contestStanding.create({
+      data: {
         contestId,
         userId,
         rank: 0,

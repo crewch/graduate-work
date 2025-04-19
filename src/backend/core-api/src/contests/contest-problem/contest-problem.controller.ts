@@ -20,6 +20,7 @@ import { ContestProblemService } from './contest-problem.service';
 import { ContestOwner } from '../decorators/contest-owner.decorator';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ContestProblemResponseDto } from './dto/contest-problem-response.dto';
+import { CurrentUser } from 'src/auth/decorators/user.decorator';
 
 @Auth()
 @ApiBearerAuth()
@@ -34,8 +35,11 @@ export class ContestProblemController {
     type: [ContestProblemResponseDto],
   })
   @ApiNotFoundResponse({ description: 'Контест не найден' })
-  getProblems(@Param('contestId') contestId: string) {
-    return this.contestProblemService.getContestProblems(contestId);
+  getProblems(
+    @Param('contestId') contestId: string,
+    @CurrentUser('userId') userId: string,
+  ) {
+    return this.contestProblemService.getContestProblems(contestId, userId);
   }
 
   @Get(':problemId')
@@ -48,10 +52,12 @@ export class ContestProblemController {
   async getProblem(
     @Param('contestId') contestId: string,
     @Param('problemId') problemId: string,
+    @CurrentUser('userId') userId: string,
   ) {
     const problem = await this.contestProblemService.getContestProblem(
       contestId,
       problemId,
+      userId,
     );
 
     if (!problem) {

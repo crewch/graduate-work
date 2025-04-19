@@ -1,4 +1,4 @@
-import { User } from '../users'
+import { User } from '@/shared/model/prisma-types'
 
 export interface SignInDto {
 	login: string

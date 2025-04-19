@@ -1,5 +1,6 @@
 import { authApi } from '@/shared/api'
-import { GlobalRatingResponseDto, UpdateUserDto, User } from './types'
+import { GetGlobalRatingResponseDto, UpdateUserDto } from './types'
+import { User } from '@/shared/model/prisma-types'
 
 class UsersService {
 	private BASE_URL = '/users'
@@ -17,7 +18,7 @@ class UsersService {
 	}
 
 	async getGlobalRating(page: number = 1, pageSize: number = 20) {
-		const { data } = await authApi.get<GlobalRatingResponseDto>(
+		const { data } = await authApi.get<GetGlobalRatingResponseDto>(
 			`${this.BASE_URL}/ratings`,
 			{
 				params: {

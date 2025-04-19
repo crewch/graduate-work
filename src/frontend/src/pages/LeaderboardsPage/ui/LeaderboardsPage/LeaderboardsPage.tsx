@@ -53,8 +53,8 @@ export const LeaderboardsPage = () => {
 							<TableHeader>
 								<TableRow>
 									<TableHead className="max-w-5">№</TableHead>
-									<TableHead>имя пользователя</TableHead>
-									<TableHead>рейтинг</TableHead>
+									<TableHead>Имя пользователя</TableHead>
+									<TableHead>Рейтинг</TableHead>
 								</TableRow>
 							</TableHeader>
 							<TableBody>

@@ -20,7 +20,7 @@ import {
 	TableRow,
 } from '@/shared/ui'
 import { contestService } from '@/shared/services/contests'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Loader } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -36,6 +36,12 @@ export const ContestsPage = () => {
 		queryKey: ['contests-list', page, pageSize],
 		queryFn: () => contestService.getContests(page, pageSize),
 		refetchInterval: 5000,
+	})
+
+	const { mutate } = useMutation({
+		mutationKey: ['register-contests'],
+		mutationFn: (contestId: string) =>
+			contestService.registerContest(contestId),
 	})
 
 	return (
@@ -54,12 +60,12 @@ export const ContestsPage = () => {
 						<Table>
 							<TableHeader>
 								<TableRow>
-									<TableHead>название</TableHead>
-									<TableHead>статус</TableHead>
-									<TableHead>автор</TableHead>
-									<TableHead>время начала</TableHead>
-									<TableHead>время окончания</TableHead>
-									<TableHead>регистрация</TableHead>
+									<TableHead>Название</TableHead>
+									<TableHead>Статус</TableHead>
+									<TableHead>Автор</TableHead>
+									<TableHead>Время начала</TableHead>
+									<TableHead>Время окончания</TableHead>
+									<TableHead>Регистрация</TableHead>
 								</TableRow>
 							</TableHeader>
 							<TableBody>
@@ -77,6 +83,7 @@ export const ContestsPage = () => {
 										<TableCell>
 											<Link
 												href={`contests/${contest.contestId}`}
+												onClick={() => mutate(contest.contestId)}
 												className="hover:underline underline-offset-2"
 											>
 												Войти

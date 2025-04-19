@@ -1,3 +1,12 @@
+import { Problem, ProblemSample, TestCase } from '@/shared/model/prisma-types'
+
+export type CreateTestCase = Pick<TestCase, 'input' | 'output'>
+
+export type CreateSample = Pick<
+	ProblemSample,
+	'input' | 'output' | 'explanation'
+>
+
 export interface CreateProblemDto {
 	title: string
 	description: string
@@ -5,44 +14,15 @@ export interface CreateProblemDto {
 	outputFormat: string
 	timeLimit: number
 	memoryLimit: number
-	samples: Sample[]
-	testCases: TestCase[]
+	samples: CreateSample[]
+	testCases: CreateTestCase[]
 }
 
-export interface TestCase {
-	input: string
-	output: string
-}
-
-export interface Sample {
-	input: string
-	output: string
-	explanation?: string
-}
-
-export interface ProblemsSample {
-	sampleId: string
-	problemId: string
-	input: string
-	output: string
-	explanation?: string
-}
-
-export interface Problem {
-	problemId: string
-	title: string
-	description: string
-	inputFormat: string
-	outputFormat: string
-	timeLimit: number
-	memoryLimit: number
-	createdBy: string
-	createdAt: string
-	updatedAt: string
-	samples: ProblemsSample[]
+export interface ProblemResponseDto extends Problem {
+	samples: ProblemSample[]
 }
 
 export interface GetProblemsResponseDto {
-	problems: Problem[]
+	problems: ProblemResponseDto[]
 	total: number
 }

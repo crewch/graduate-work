@@ -1,10 +1,10 @@
 import { authApi } from '@/shared/api'
 import {
-	Contest,
 	CreateContestDto,
-	GetContestResponseDto,
+	GetContestProblemsResponseDto,
 	GetContestsResponseDto,
 } from './types'
+import { Contest } from '@/shared/model/prisma-types'
 
 class ContestService {
 	private BASE_URL = '/contests'
@@ -16,9 +16,7 @@ class ContestService {
 	}
 
 	async getContest(contestId: string) {
-		const { data } = await authApi.post<GetContestResponseDto>(
-			`${this.BASE_URL}/${contestId}`
-		)
+		const { data } = await authApi.get<Contest>(`${this.BASE_URL}/${contestId}`)
 
 		return data
 	}
@@ -30,6 +28,26 @@ class ContestService {
 				pageSize,
 			},
 		})
+
+		return data
+	}
+
+	async registerContest(contestId: string) {
+		await authApi.post(`${this.BASE_URL}/${contestId}/register`)
+	}
+
+	async getContestProblems(contestId: string) {
+		const { data } = await authApi.get<GetContestProblemsResponseDto[]>(
+			`${this.BASE_URL}/${contestId}/problems`
+		)
+
+		return data
+	}
+
+	async getContestProblem(contestId: string, problemId: string) {
+		const { data } = await authApi.get<GetContestProblemsResponseDto>(
+			`${this.BASE_URL}/${contestId}/problems/${problemId}`
+		)
 
 		return data
 	}

@@ -1,5 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ContestProblem } from '@prisma/client';
+import { ContestProblem, ProblemSample } from '@prisma/client';
+
+export class Sample implements ProblemSample {
+  sampleId: string;
+
+  problemId: string;
+
+  input: string;
+
+  output: string;
+
+  explanation: string | null;
+}
 
 export class ContestProblemSlimResponseDto {
   @ApiProperty({ description: 'Уникальный идентификатор задачи' })
@@ -45,6 +57,13 @@ export class ContestProblemSlimResponseDto {
     description: 'Идентификатор создателя задачи',
   })
   createdBy: string | null;
+
+  samples: Sample[];
+
+  @ApiProperty({
+    description: 'Решена ли задача',
+  })
+  isSolved: boolean;
 
   @ApiProperty({ description: 'Дата создания задачи' })
   createdAt: Date;

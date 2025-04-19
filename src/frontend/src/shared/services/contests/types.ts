@@ -1,16 +1,11 @@
-import { User } from '../users/types'
-
-export interface Contest {
-	contestId: string
-	title: string
-	description: string
-	startTime: string
-	endTime: string
-	status: string
-	createdBy: string
-	updatedAt: string
-	createdAt: string
-}
+import {
+	Contest,
+	ContestProblem,
+	ContestStanding,
+	Problem,
+	ProblemSample,
+	User,
+} from '@/shared/model/prisma-types'
 
 export interface CreateContestDto {
 	title: string
@@ -25,33 +20,17 @@ export interface GetContestsResponseDto {
 	total: number
 }
 
-export interface Standing {
-	contestId: string
+export interface Standing extends ContestStanding {
 	problemId: string
 	problemIndex: string
-	penalty: number
-	problemsSolved: number
-	rank: number
-	userId: string
 	user: User
 }
 
-export interface ProblemResponseDto {
-	contestId: string
-	problemId: string
-	problemIndex: string
+export interface ProblemResponseDto extends Problem {
+	samples: ProblemSample[]
+	isSolved: boolean
 }
 
-export interface GetContestResponseDto {
-	contestId: string
-	title: string
-	description: string
-	startTime: string
-	endTime: string
-	status: string
-	createdBy: string
-	updatedAt: string
-	createdAt: string
-	problems: ProblemResponseDto[]
-	standings: Standing[]
+export interface GetContestProblemsResponseDto extends ContestProblem {
+	problem: ProblemResponseDto
 }

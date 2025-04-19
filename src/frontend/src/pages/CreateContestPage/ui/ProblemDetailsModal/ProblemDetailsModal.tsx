@@ -1,4 +1,4 @@
-import { Problem } from '@/shared/services/problems'
+import { ProblemResponseDto } from '@/shared/services/problems'
 import {
 	Dialog,
 	DialogContent,
@@ -10,7 +10,7 @@ import {
 import { FC, PropsWithChildren } from 'react'
 
 interface ProblemDetailsModalProps {
-	problem: Problem
+	problem: ProblemResponseDto
 }
 
 export const ProblemDetailsModal: FC<

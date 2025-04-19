@@ -1,32 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Contest, ContestStatus } from '@prisma/client';
-import { UserResponseDto } from 'src/users/dto/user-response.dto';
-
-class ContestProblem {
-  contestId: string;
-
-  problemId: string;
-
-  problemIndex: string;
-}
-
-class ContestStanding {
-  contestId: string;
-
-  problemId: string;
-
-  problemIndex: string;
-
-  penalty: number;
-
-  problemsSolved: number;
-
-  rank: number;
-
-  userId: string;
-
-  user: UserResponseDto;
-}
 
 export class GetContestResponseDto implements Contest {
   @ApiProperty({ description: 'Уникальный идентификатор контеста' })
@@ -80,8 +53,4 @@ export class GetContestResponseDto implements Contest {
     example: '2024-01-01T09:00:00Z',
   })
   createdAt: Date;
-
-  problems: ContestProblem[];
-
-  standings: ContestStanding[];
 }
