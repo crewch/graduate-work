@@ -1,4 +1,4 @@
-import { AuthPage } from '@/pages/AuthPage'
+import { AuthPage } from '@/views/AuthPage'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {

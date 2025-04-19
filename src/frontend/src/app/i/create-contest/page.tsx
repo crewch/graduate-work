@@ -1,5 +1,10 @@
-import { CreateContestPage } from '@/pages/CreateContestPage'
+import { CreateContestPage } from '@/views/CreateContestPage'
+import { Suspense } from 'react'
 
 export default function CreateContest() {
-	return <CreateContestPage />
+	return (
+		<Suspense>
+			<CreateContestPage />
+		</Suspense>
+	)
 }

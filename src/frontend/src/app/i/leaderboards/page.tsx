@@ -1,5 +1,10 @@
-import { LeaderboardsPage } from '@/pages/LeaderboardsPage'
+import { LeaderboardsPage } from '@/views/LeaderboardsPage'
+import { Suspense } from 'react'
 
 export default function Leaderboards() {
-	return <LeaderboardsPage />
+	return (
+		<Suspense>
+			<LeaderboardsPage />
+		</Suspense>
+	)
 }

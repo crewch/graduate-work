@@ -1,4 +1,4 @@
-import { ContestDetailsPage } from '@/pages/ContestDetailsPage'
+import { ContestDetailsPage } from '@/views/ContestDetailsPage'
 
 export default async function ContestDetails({
 	params,

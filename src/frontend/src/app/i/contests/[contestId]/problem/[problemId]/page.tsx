@@ -1,4 +1,4 @@
-import { ProblemDetailsPage } from '@/pages/ProblemDetailsPage'
+import { ProblemDetailsPage } from '@/views/ProblemDetailsPage'
 
 export default async function ProblemDetails({
 	params,
