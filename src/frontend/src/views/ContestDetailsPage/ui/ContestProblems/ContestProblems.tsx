@@ -8,6 +8,7 @@ import {
 	CardHeader,
 	CardTitle,
 	ProblemStatus,
+	Skeleton,
 	Table,
 	TableBody,
 	TableCell,
@@ -16,7 +17,7 @@ import {
 	TableRow,
 } from '@/shared/ui'
 import { useQuery } from '@tanstack/react-query'
-import { Loader, Send } from 'lucide-react'
+import { Send } from 'lucide-react'
 import Link from 'next/link'
 import { FC } from 'react'
 
@@ -32,7 +33,7 @@ export const ContestProblems: FC<ContestProblemsProps> = ({ contestId }) => {
 
 	return (
 		<>
-			{isLoading && <Loader className="animate-spin" />}
+			{isLoading && <Skeleton className="w-full h-96" />}
 			{isSuccess && (
 				<Card>
 					<CardHeader>

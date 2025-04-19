@@ -96,7 +96,7 @@ export const CreateContestPage = () => {
 							Заполните данные для создания нового соревнования
 						</CardDescription>
 					</CardHeader>
-					<CardContent className="space-y-6 overflow-y-auto">
+					<CardContent className="space-y-4 overflow-y-auto">
 						<FormField
 							control={form.control}
 							name="title"
@@ -163,7 +163,7 @@ export const CreateContestPage = () => {
 							<Skeleton className="w-full h-[276px] rounded-[14px]" />
 						)}
 						{isSuccess && (
-							<Card className="flex flex-col gap-2 justify-start">
+							<Card className="flex flex-col gap-1 justify-start">
 								<CardHeader>
 									<CardTitle>Выберите задачи</CardTitle>
 								</CardHeader>

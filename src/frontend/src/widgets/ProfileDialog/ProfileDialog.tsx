@@ -20,7 +20,7 @@ export const ProfileDialog = ({ children }: PropsWithChildren) => {
 	return (
 		<Dialog>
 			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent className="sm:max-w-[425px]">
+			<DialogContent className="w-[500px]">
 				<DialogHeader>
 					<DialogTitle>Профиль</DialogTitle>
 				</DialogHeader>

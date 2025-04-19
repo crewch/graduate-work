@@ -19,7 +19,7 @@ export const ProblemDetailsModal: FC<
 	return (
 		<Dialog>
 			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent>
+			<DialogContent className="w-[1000px]">
 				<DialogHeader>
 					<DialogTitle>{problem.title}</DialogTitle>
 					<DialogDescription>Подробная информация о задаче</DialogDescription>
