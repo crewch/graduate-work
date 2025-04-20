@@ -11,6 +11,7 @@ import {
 	Skeleton,
 } from '@/shared/ui'
 import { useQuery } from '@tanstack/react-query'
+import { format } from 'date-fns'
 
 export const ProfileDialog = ({ children }: PropsWithChildren) => {
 	const [open, setOpen] = useState(false)
@@ -38,7 +39,7 @@ export const ProfileDialog = ({ children }: PropsWithChildren) => {
 						<p>Рейтинг</p>
 						<p>{data.rating}</p>
 						<p>Время создания</p>
-						<p> {new Date(data.createdAt).toLocaleString()}</p>
+						<p>{format(new Date(data.createdAt), 'dd MMMM yyyy, HH:mm:ss')}</p>
 					</div>
 				)}
 			</DialogContent>

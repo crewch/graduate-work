@@ -2,8 +2,8 @@ import { z } from 'zod'
 
 export const formSchema = z
 	.object({
-		title: z.string().nonempty('Название контеста обязательно'),
-		description: z.string().nonempty('Описание контеста обязательно'),
+		title: z.string().nonempty('Название соревнования обязательно'),
+		description: z.string().nonempty('Описание соревнования обязательно'),
 		startTime: z
 			.string()
 			.refine(

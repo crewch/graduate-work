@@ -7,6 +7,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/shared/ui'
+import { format } from 'date-fns'
 import { FC, PropsWithChildren } from 'react'
 
 interface ProblemDetailsModalProps {
@@ -95,9 +96,12 @@ export const ProblemDetailsModal: FC<
 						</h3>
 						<div className="space-y-2">
 							<p className="text-sm">
-								<span className="font-semibold">Создано:</span>{' '}
+								<span className="font-semibold">Дата создания:</span>{' '}
 								{problem.createdAt
-									? new Date(problem.createdAt).toLocaleString()
+									? format(
+											new Date(problem.createdAt),
+											'dd MMMM yyyy, HH:mm:ss'
+									  )
 									: 'Не указано'}
 							</p>
 						</div>

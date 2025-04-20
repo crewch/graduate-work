@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Loader } from 'lucide-react'
 import { FC } from 'react'
 import { ContestProblems } from '../ContestProblems'
+import { format } from 'date-fns'
 
 interface ContestDetailsPageProps {
 	contestId: string
@@ -35,8 +36,14 @@ export const ContestDetailsPage: FC<ContestDetailsPageProps> = ({
 						<CardDescription className="space-y-1">
 							<p>{data.description}</p>
 							<p>Статус: {data.status}</p>
-							<p>Начало: {new Date(data.startTime).toLocaleString()}</p>
-							<p>Конец: {new Date(data.endTime).toLocaleString()}</p>
+							<p>
+								Начало:{' '}
+								{format(new Date(data.startTime), 'dd MMMM yyyy, HH:mm:ss')}
+							</p>
+							<p>
+								Конец:{' '}
+								{format(new Date(data.endTime), 'dd MMMM yyyy, HH:mm:ss')}
+							</p>
 						</CardDescription>
 					</CardHeader>
 					<CardContent>

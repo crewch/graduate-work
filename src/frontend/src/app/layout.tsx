@@ -11,7 +11,7 @@ const font = Inter({
 
 export const metadata: Metadata = {
 	title: 'Code Arena',
-	description: 'Сервис для проведения контестов',
+	description: 'Сервис для проведения соревнований по программированию',
 }
 
 export default function RootLayout({

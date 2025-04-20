@@ -106,9 +106,12 @@ export const CreateContestPage = () => {
 							name="title"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Название контеста</FormLabel>
+									<FormLabel>Название соревнования</FormLabel>
 									<FormControl>
-										<Input placeholder="Введите название контеста" {...field} />
+										<Input
+											placeholder="Введите название соревнования"
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -119,9 +122,12 @@ export const CreateContestPage = () => {
 							name="description"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Описание контеста</FormLabel>
+									<FormLabel>Описание соревнования</FormLabel>
 									<FormControl>
-										<Input placeholder="Введите описание контеста" {...field} />
+										<Input
+											placeholder="Введите описание соревнования"
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -178,84 +184,84 @@ export const CreateContestPage = () => {
 										render={() => (
 											<FormItem>
 												<FormControl>
-													<div>
-														{data.problems.length === 0 ? (
-															<p>Задачи не найдены</p>
-														) : (
-															<div className="space-y-2">
-																{data.problems.map(problem => (
-																	<div
-																		key={problem.problemId}
-																		className="flex items-center gap-3 h-9"
-																	>
-																		<Checkbox
-																			id={problem.problemId}
-																			checked={form
-																				.watch('problemIds')
-																				.includes(problem.problemId)}
-																			onCheckedChange={() =>
-																				handleProblemSelect(problem.problemId)
-																			}
-																		/>
-																		<label htmlFor={problem.problemId}>
-																			{problem.title}
-																		</label>
-																		<ProblemDetailsModal problem={problem}>
-																			<Button
-																				type="button"
-																				variant={'ghost'}
-																				size={'icon'}
-																			>
-																				<Info />
-																			</Button>
-																		</ProblemDetailsModal>
-																	</div>
-																))}
-															</div>
-														)}
-													</div>
+													{!!data.total ? (
+														<div className="space-y-2">
+															{data.problems.map(problem => (
+																<div
+																	key={problem.problemId}
+																	className="flex items-center gap-3 h-9"
+																>
+																	<Checkbox
+																		id={problem.problemId}
+																		checked={form
+																			.watch('problemIds')
+																			.includes(problem.problemId)}
+																		onCheckedChange={() =>
+																			handleProblemSelect(problem.problemId)
+																		}
+																	/>
+																	<label htmlFor={problem.problemId}>
+																		{problem.title}
+																	</label>
+																	<ProblemDetailsModal problem={problem}>
+																		<Button
+																			type="button"
+																			variant={'ghost'}
+																			size={'icon'}
+																		>
+																			<Info />
+																		</Button>
+																	</ProblemDetailsModal>
+																</div>
+															))}
+														</div>
+													) : (
+														<p>Задачи не найдены</p>
+													)}
 												</FormControl>
 												<FormMessage />
 											</FormItem>
 										)}
 									/>
 								</CardContent>
-								<CardFooter>
-									<Pagination>
-										<PaginationContent>
-											<PaginationItem>
-												<PaginationPrevious
-													href={createPageURL(page - 1)}
-													aria-disabled={page <= 1}
-													tabIndex={page <= 1 ? -1 : undefined}
-													className={
-														page <= 1
-															? 'pointer-events-none opacity-50'
-															: undefined
-													}
-												/>
-											</PaginationItem>
-											<PaginationItem>
-												<PaginationNext
-													href={createPageURL(page + 1)}
-													aria-disabled={
-														page === Math.ceil(data.total / pageSize)
-													}
-													tabIndex={
-														page === Math.ceil(data.total / pageSize)
-															? -1
-															: undefined
-													}
-													className={
-														page === Math.ceil(data.total / pageSize)
-															? 'pointer-events-none opacity-50'
-															: undefined
-													}
-												/>
-											</PaginationItem>
-										</PaginationContent>
-									</Pagination>
-								</CardFooter>
+								{!!data.total && (
+									<CardFooter>
+										<Pagination>
+											<PaginationContent>
+												<PaginationItem>
+													<PaginationPrevious
+														href={createPageURL(page - 1)}
+														aria-disabled={page <= 1}
+														tabIndex={page <= 1 ? -1 : undefined}
+														className={
+															page <= 1
+																? 'pointer-events-none opacity-50'
+																: undefined
+														}
+													/>
+												</PaginationItem>
+												<PaginationItem>
+													<PaginationNext
+														href={createPageURL(page + 1)}
+														aria-disabled={
+															page === Math.ceil(data.total / pageSize)
+														}
+														tabIndex={
+															page === Math.ceil(data.total / pageSize)
+																? -1
+																: undefined
+														}
+														className={
+															page === Math.ceil(data.total / pageSize)
+																? 'pointer-events-none opacity-50'
+																: undefined
+														}
+													/>
+												</PaginationItem>
+											</PaginationContent>
+										</Pagination>
+									</CardFooter>
+								)}
 							</Card>
 						)}
 					</CardContent>

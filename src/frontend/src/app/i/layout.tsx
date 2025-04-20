@@ -59,7 +59,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
 								pathname === DASHBOARD_PAGES.CREATE_CONTEST ? 'underline' : ''
 							}
 						>
-							Создать контест
+							Создать соревнование
 						</Link>
 					</Button>
 					<Button variant={'link'} asChild>

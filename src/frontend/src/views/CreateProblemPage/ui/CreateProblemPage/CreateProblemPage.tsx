@@ -36,7 +36,7 @@ export const CreateProblemPage = () => {
 			outputFormat: '',
 			timeLimit: 1,
 			memoryLimit: 1,
-			samples: [{ id: uuidv4(), input: '', output: '' }],
+			samples: [{ id: uuidv4(), input: '', output: '', explanation: '' }],
 			testCases: [{ id: uuidv4(), input: '', output: '' }],
 		},
 	})

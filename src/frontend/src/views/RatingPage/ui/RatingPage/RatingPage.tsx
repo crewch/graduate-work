@@ -51,7 +51,7 @@ export const RatingPage: FC<RatingPageProps> = ({ contestId }) => {
 					<CardHeader>
 						<CardTitle>Список лидеров</CardTitle>
 						<CardDescription>
-							Рейтинговая таблица участников контеста.
+							Рейтинговая таблица участников соревнования.
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="overflow-y-auto">
@@ -65,7 +65,7 @@ export const RatingPage: FC<RatingPageProps> = ({ contestId }) => {
 								</TableRow>
 							</TableHeader>
 							<TableBody>
-								{data?.standings.map(standing => (
+								{data.standings.map(standing => (
 									<TableRow key={standing.userId}>
 										<TableCell>
 											{standing.rank === 0 ? '-' : standing.rank}

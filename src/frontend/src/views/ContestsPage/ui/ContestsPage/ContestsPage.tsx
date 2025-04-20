@@ -63,108 +63,118 @@ export const ContestsPage = () => {
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="overflow-y-auto">
-						<Table>
-							<TableHeader>
-								<TableRow>
-									<TableHead>Название</TableHead>
-									<TableHead>Статус</TableHead>
-									<TableHead>Автор</TableHead>
-									<TableHead>Время начала</TableHead>
-									<TableHead>Время окончания</TableHead>
-									<TableHead>Регистрация</TableHead>
-								</TableRow>
-							</TableHeader>
-							<TableBody>
-								{data.contests.map(contest => (
-									<TableRow key={contest.contestId}>
-										<TableCell>{contest.title}</TableCell>
-										<TableCell>
-											{contest.status === 'UPCOMING' && (
-												<Badge>{contest.status}</Badge>
-											)}
-											{contest.status === 'ONGOING' && (
-												<Badge variant={'positive'}>{contest.status}</Badge>
-											)}
-											{contest.status === 'FINISHED' && (
-												<Badge variant={'destructive'}>{contest.status}</Badge>
-											)}
-										</TableCell>
-										<TableCell>{contest.creator.username}</TableCell>
-										<TableCell>
-											{format(
-												new Date(contest.startTime),
-												'dd MMMM yyyy, HH:mm:ss'
-											)}
-										</TableCell>
-										<TableCell>
-											{format(
-												new Date(contest.endTime),
-												'dd MMMM yyyy, HH:mm:ss'
-											)}
-										</TableCell>
-										<TableCell>
-											{contest.status === 'UPCOMING' ? (
-												<TooltipProvider>
-													<Tooltip>
-														<TooltipTrigger
-															className={'opacity-50 cursor-default'}
-														>
-															Войти
-														</TooltipTrigger>
-														<TooltipContent>
-															<p>Контест ещё не начался</p>
-														</TooltipContent>
-													</Tooltip>
-												</TooltipProvider>
-											) : (
-												<Link
-													href={`contests/${contest.contestId}`}
-													onClick={() => {
-														if (contest.status === 'ONGOING') {
-															mutate(contest.contestId)
-														}
-													}}
-													className="hover:underline underline-offset-2"
-												>
-													Войти
-												</Link>
-											)}
-										</TableCell>
+						{!!data.total ? (
+							<Table>
+								<TableHeader>
+									<TableRow>
+										<TableHead>Название</TableHead>
+										<TableHead>Статус</TableHead>
+										<TableHead>Автор</TableHead>
+										<TableHead>Время начала</TableHead>
+										<TableHead>Время окончания</TableHead>
+										<TableHead>Регистрация</TableHead>
 									</TableRow>
-								))}
-							</TableBody>
-						</Table>
+								</TableHeader>
+								<TableBody>
+									{data.contests.map(contest => (
+										<TableRow key={contest.contestId}>
+											<TableCell>{contest.title}</TableCell>
+											<TableCell>
+												{contest.status === 'UPCOMING' && (
+													<Badge>{contest.status}</Badge>
+												)}
+												{contest.status === 'ONGOING' && (
+													<Badge variant={'positive'}>{contest.status}</Badge>
+												)}
+												{contest.status === 'FINISHED' && (
+													<Badge variant={'destructive'}>
+														{contest.status}
+													</Badge>
+												)}
+											</TableCell>
+											<TableCell>{contest.creator.username}</TableCell>
+											<TableCell>
+												{format(
+													new Date(contest.startTime),
+													'dd MMMM yyyy, HH:mm:ss'
+												)}
+											</TableCell>
+											<TableCell>
+												{format(
+													new Date(contest.endTime),
+													'dd MMMM yyyy, HH:mm:ss'
+												)}
+											</TableCell>
+											<TableCell>
+												{contest.status === 'UPCOMING' ? (
+													<TooltipProvider>
+														<Tooltip>
+															<TooltipTrigger
+																className={'opacity-50 cursor-default'}
+															>
+																Войти
+															</TooltipTrigger>
+															<TooltipContent>
+																<p>Соревнование ещё не началось</p>
+															</TooltipContent>
+														</Tooltip>
+													</TooltipProvider>
+												) : (
+													<Link
+														href={`contests/${contest.contestId}`}
+														onClick={() => {
+															if (contest.status === 'ONGOING') {
+																mutate(contest.contestId)
+															}
+														}}
+														className="hover:underline underline-offset-2"
+													>
+														Войти
+													</Link>
+												)}
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						) : (
+							<p>Соревнования не найдены</p>
+						)}
 					</CardContent>
-					<CardFooter>
-						<Pagination>
-							<PaginationContent>
-								<PaginationItem>
-									<PaginationPrevious
-										href={createPageURL(page - 1)}
-										aria-disabled={page <= 1}
-										tabIndex={page <= 1 ? -1 : undefined}
-										className={
-											page <= 1 ? 'pointer-events-none opacity-50' : undefined
-										}
-									/>
-								</PaginationItem>
-								<PaginationItem>
-									<PaginationNext
-										href={createPageURL(page + 1)}
-										aria-disabled={page === Math.ceil(data.total / pageSize)}
-										tabIndex={
-											page === Math.ceil(data.total / pageSize) ? -1 : undefined
-										}
-										className={
-											page === Math.ceil(data.total / pageSize)
-												? 'pointer-events-none opacity-50'
-												: undefined
-										}
-									/>
-								</PaginationItem>
-							</PaginationContent>
-						</Pagination>
-					</CardFooter>
+					{!!data.total && (
+						<CardFooter>
+							<Pagination>
+								<PaginationContent>
+									<PaginationItem>
+										<PaginationPrevious
+											href={createPageURL(page - 1)}
+											aria-disabled={page <= 1}
+											tabIndex={page <= 1 ? -1 : undefined}
+											className={
+												page <= 1 ? 'pointer-events-none opacity-50' : undefined
+											}
+										/>
+									</PaginationItem>
+									<PaginationItem>
+										<PaginationNext
+											href={createPageURL(page + 1)}
+											aria-disabled={page === Math.ceil(data.total / pageSize)}
+											tabIndex={
+												page === Math.ceil(data.total / pageSize)
+													? -1
+													: undefined
+											}
+											className={
+												page === Math.ceil(data.total / pageSize)
+													? 'pointer-events-none opacity-50'
+													: undefined
+											}
+										/>
+									</PaginationItem>
+								</PaginationContent>
+							</Pagination>
+						</CardFooter>
+					)}
 				</Card>
 			)}
 		</div>
