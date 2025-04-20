@@ -30,6 +30,7 @@ import { Loader } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createPageURL } from '@/shared/lib'
+import { format } from 'date-fns'
 
 export const ContestsPage = () => {
 	const searchParams = useSearchParams()
@@ -90,10 +91,16 @@ export const ContestsPage = () => {
 										</TableCell>
 										<TableCell>{contest.creator.username}</TableCell>
 										<TableCell>
-											{new Date(contest.startTime).toLocaleString()}
+											{format(
+												new Date(contest.startTime),
+												'dd MMMM yyyy, HH:mm:ss'
+											)}
 										</TableCell>
 										<TableCell>
-											{new Date(contest.endTime).toLocaleString()}
+											{format(
+												new Date(contest.endTime),
+												'dd MMMM yyyy, HH:mm:ss'
+											)}
 										</TableCell>
 										<TableCell>
 											{contest.status === 'UPCOMING' ? (
