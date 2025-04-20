@@ -28,12 +28,12 @@ export interface Contest {
 	contestId: string
 	title: string
 	description: string
-	startTime: Date
-	endTime: Date
+	startTime: string
+	endTime: string
 	status: ContestStatus
 	createdBy?: string | null
-	createdAt: Date
-	updatedAt: Date
+	createdAt: string
+	updatedAt: string
 }
 
 export interface ContestProblem {
@@ -59,8 +59,8 @@ export interface Problem {
 	timeLimit: number
 	memoryLimit: number
 	createdBy?: string | null
-	createdAt: Date
-	updatedAt: Date
+	createdAt: string
+	updatedAt: string
 }
 
 export interface User {
@@ -68,8 +68,8 @@ export interface User {
 	username: string
 	email: string
 	rating: number
-	createdAt: Date
-	updatedAt: Date
+	createdAt: string
+	updatedAt: string
 }
 
 export interface TestCase {
@@ -86,7 +86,7 @@ export interface SubmissionResult {
 	errorMessage?: string | null
 	executionTime?: number | null
 	memoryUsed?: number | null
-	createdAt: Date
+	createdAt: string
 }
 
 export interface Submission {
@@ -96,7 +96,7 @@ export interface Submission {
 	problemId: string
 	language: ProgrammingLanguage
 	code: string
-	submissionTime: Date
+	submissionTime: string
 	verdict: SubmissionStatus
 }
 

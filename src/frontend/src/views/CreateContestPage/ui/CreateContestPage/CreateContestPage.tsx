@@ -30,7 +30,7 @@ import { format } from 'date-fns'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { problemsService } from '@/shared/services/problems'
 import { useSearchParams } from 'next/navigation'
-import { createPageURL } from '@/shared/lib'
+import { convertToUTC, createPageURL } from '@/shared/lib'
 import { contestService } from '@/shared/services/contests'
 import { toast } from 'sonner'
 import { Info, Loader2 } from 'lucide-react'
@@ -50,11 +50,11 @@ export const CreateContestPage = () => {
 
 	const searchParams = useSearchParams()
 
-	const page = Number(searchParams?.get('page')) || 1
-	const pageSize = Number(searchParams?.get('pageSize')) || 5
+	const page = Number(searchParams.get('page')) || 1
+	const pageSize = Number(searchParams.get('pageSize')) || 5
 
 	const { data, isSuccess, isLoading } = useQuery({
-		queryKey: ['problems', page, pageSize],
+		queryKey: ['get-problems', page, pageSize],
 		queryFn: () => problemsService.getProblems(page, pageSize),
 	})
 
@@ -83,7 +83,11 @@ export const CreateContestPage = () => {
 	})
 
 	const onSubmit = (data: CreateContestFormValues) => {
-		mutate(data)
+		mutate({
+			...data,
+			startTime: convertToUTC(data.startTime),
+			endTime: convertToUTC(data.endTime),
+		})
 	}
 
 	return (

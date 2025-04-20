@@ -1,5 +1,6 @@
 'use client'
 
+import React, { PropsWithChildren, useState } from 'react'
 import { userService } from '@/shared/services/users'
 import {
 	Dialog,
@@ -7,23 +8,27 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
+	Skeleton,
 } from '@/shared/ui'
 import { useQuery } from '@tanstack/react-query'
-import React, { PropsWithChildren } from 'react'
 
 export const ProfileDialog = ({ children }: PropsWithChildren) => {
-	const { data, isSuccess } = useQuery({
-		queryKey: ['profile'],
+	const [open, setOpen] = useState(false)
+
+	const { data, isLoading, isSuccess } = useQuery({
+		queryKey: ['get-profile'],
 		queryFn: () => userService.getProfile(),
+		enabled: open,
 	})
 
 	return (
-		<Dialog>
+		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent className="w-[500px]">
 				<DialogHeader>
 					<DialogTitle>Профиль</DialogTitle>
 				</DialogHeader>
+				{isLoading && <Skeleton className="h-[120px]" />}
 				{isSuccess && (
 					<div className="grid grid-cols-2 gap-2">
 						<p>Имя пользователя</p>

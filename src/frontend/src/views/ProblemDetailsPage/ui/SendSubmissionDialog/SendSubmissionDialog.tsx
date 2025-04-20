@@ -35,6 +35,7 @@ import { useForm } from 'react-hook-form'
 import { ProgrammingLanguage } from '@/shared/model/prisma-types'
 import Editor from '@monaco-editor/react'
 import { useTheme } from 'next-themes'
+import { AxiosError } from 'axios'
 
 interface SendSubmissionDialogProps {
 	contestId: string
@@ -61,8 +62,10 @@ export const SendSubmissionDialog: FC<
 		onSuccess: () => {
 			toast.success('Решение успешно отправлено')
 		},
-		onError: () => {
-			toast.error('Произошла ошибка, решение не отправлено')
+		onError: (e: AxiosError<Error>) => {
+			toast.error('Произошла ошибка, решение не отправлено', {
+				description: e.response?.data.message,
+			})
 		},
 	})
 

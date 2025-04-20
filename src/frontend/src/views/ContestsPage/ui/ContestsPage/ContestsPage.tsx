@@ -18,6 +18,10 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
 } from '@/shared/ui'
 import { contestService } from '@/shared/services/contests'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -29,11 +33,11 @@ import { createPageURL } from '@/shared/lib'
 export const ContestsPage = () => {
 	const searchParams = useSearchParams()
 
-	const page = Number(searchParams?.get('page')) || 1
-	const pageSize = Number(searchParams?.get('pageSize')) || 20
+	const page = Number(searchParams.get('page')) || 1
+	const pageSize = Number(searchParams.get('pageSize')) || 20
 
 	const { data, isLoading, isSuccess } = useQuery({
-		queryKey: ['contests-list', page, pageSize],
+		queryKey: ['get-contests-list', page, pageSize],
 		queryFn: () => contestService.getContests(page, pageSize),
 		refetchInterval: 5000,
 	})
@@ -81,13 +85,32 @@ export const ContestsPage = () => {
 											{new Date(contest.endTime).toLocaleString()}
 										</TableCell>
 										<TableCell>
-											<Link
-												href={`contests/${contest.contestId}`}
-												onClick={() => mutate(contest.contestId)}
-												className="hover:underline underline-offset-2"
-											>
-												Войти
-											</Link>
+											{contest.status === 'UPCOMING' ? (
+												<TooltipProvider>
+													<Tooltip>
+														<TooltipTrigger
+															className={'opacity-50 cursor-default'}
+														>
+															Войти
+														</TooltipTrigger>
+														<TooltipContent>
+															<p>Контест ещё не начался</p>
+														</TooltipContent>
+													</Tooltip>
+												</TooltipProvider>
+											) : (
+												<Link
+													href={`contests/${contest.contestId}`}
+													onClick={() => {
+														if (contest.status === 'ONGOING') {
+															mutate(contest.contestId)
+														}
+													}}
+													className="hover:underline underline-offset-2"
+												>
+													Войти
+												</Link>
+											)}
 										</TableCell>
 									</TableRow>
 								))}

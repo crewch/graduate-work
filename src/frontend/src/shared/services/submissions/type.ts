@@ -11,6 +11,11 @@ export interface SendSubmissionDto {
 	code: string
 }
 
+interface Problem {
+	title: string
+}
+
 export interface GetSubmissionResponseDto extends Submission {
-	lastResult: SubmissionResult
+	results: SubmissionResult[]
+	problem: Problem
 }

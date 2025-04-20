@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { SubmissionsService } from './submissions.service';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
@@ -21,6 +22,9 @@ export class SubmissionsController {
   @ApiOperation({ summary: 'Создать новую посылку' })
   @ApiCreatedResponse({
     description: 'Посылка успешно создана',
+  })
+  @ApiBadRequestResponse({
+    description: 'Контест ещё не начался или уже закончился',
   })
   async create(
     @CurrentUser('userId') userId: string,

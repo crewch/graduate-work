@@ -39,7 +39,7 @@ export const ProblemDetailsPage: FC<ProblemDetailsPageProps> = ({
 					<CardHeader className="flex justify-between">
 						<div>
 							<CardTitle className="text-2xl flex items-center gap-2.5">
-								{data.problem.title}
+								{data.problemIndex}. {data.problem.title}
 								<ProblemStatus isSolved={data.problem.isSolved} />
 							</CardTitle>
 							<CardDescription>

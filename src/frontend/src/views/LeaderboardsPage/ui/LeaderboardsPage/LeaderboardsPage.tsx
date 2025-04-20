@@ -28,11 +28,11 @@ import { useSearchParams } from 'next/navigation'
 export const LeaderboardsPage = () => {
 	const searchParams = useSearchParams()
 
-	const page = Number(searchParams?.get('page')) || 1
-	const pageSize = Number(searchParams?.get('pageSize')) || 20
+	const page = Number(searchParams.get('page')) || 1
+	const pageSize = Number(searchParams.get('pageSize')) || 20
 
 	const { data, isLoading, isSuccess } = useQuery({
-		queryKey: ['leaderboards-list', page, pageSize],
+		queryKey: ['get-leaderboards-list', page, pageSize],
 		queryFn: () => userService.getGlobalRating(page, pageSize),
 		refetchInterval: 5000,
 	})
@@ -52,7 +52,7 @@ export const LeaderboardsPage = () => {
 						<Table>
 							<TableHeader>
 								<TableRow>
-									<TableHead className="max-w-5">№</TableHead>
+									<TableHead className="w-3">№</TableHead>
 									<TableHead>Имя пользователя</TableHead>
 									<TableHead>Рейтинг</TableHead>
 								</TableRow>

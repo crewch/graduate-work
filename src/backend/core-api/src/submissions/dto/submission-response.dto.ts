@@ -5,6 +5,10 @@ import {
   SubmissionStatus,
 } from '@prisma/client';
 
+class ProblemDto {
+  title: string;
+}
+
 export class SubmissionResultDto implements SubmissionResult {
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
@@ -100,5 +104,7 @@ export class SubmissionResponseDto {
   })
   verdict: SubmissionStatus;
 
-  lastResult: SubmissionResultDto;
+  results: SubmissionResultDto[];
+
+  problem: ProblemDto;
 }
