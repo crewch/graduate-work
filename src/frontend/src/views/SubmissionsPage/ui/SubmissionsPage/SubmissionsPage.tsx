@@ -33,7 +33,10 @@ export const SubmissionsPage: FC<SubmissionsPageProps> = ({ contestId }) => {
 	return (
 		<>
 			{isLoading && <Loader className="animate-spin mx-auto" />}
-			{isSuccess && data.length ? (
+			{isSuccess && !data.length && (
+				<p className="flex justify-center">Посылок пока нет</p>
+			)}
+			{isSuccess && data.length > 0 && (
 				<Card className="max-h-[700px]">
 					<CardContent className="overflow-auto">
 						<Table>
@@ -98,8 +101,6 @@ export const SubmissionsPage: FC<SubmissionsPageProps> = ({ contestId }) => {
 						</Table>
 					</CardContent>
 				</Card>
-			) : (
-				<p className="flex justify-center">Посылок пока нет</p>
 			)}
 		</>
 	)

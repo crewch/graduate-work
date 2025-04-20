@@ -3,6 +3,7 @@ import {
 	CreateContestDto,
 	GetContestProblemsResponseDto,
 	GetContestsResponseDto,
+	GetContestStandingsResponseDto,
 } from './types'
 import { Contest } from '@/shared/model/prisma-types'
 
@@ -47,6 +48,24 @@ class ContestService {
 	async getContestProblem(contestId: string, problemId: string) {
 		const { data } = await authApi.get<GetContestProblemsResponseDto>(
 			`${this.BASE_URL}/${contestId}/problems/${problemId}`
+		)
+
+		return data
+	}
+
+	async getContestStandings(
+		contestId: string,
+		page: number = 1,
+		pageSize: number = 20
+	) {
+		const { data } = await authApi.get<GetContestStandingsResponseDto>(
+			`${this.BASE_URL}/${contestId}/standings`,
+			{
+				params: {
+					page,
+					pageSize,
+				},
+			}
 		)
 
 		return data

@@ -1,7 +1,7 @@
 'use client'
 
 import { createPageURL } from '@/shared/lib'
-import { userService } from '@/shared/services/users'
+import { contestService } from '@/shared/services/contests'
 import {
 	Card,
 	CardContent,
@@ -24,28 +24,34 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { Loader } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
+import { FC } from 'react'
 
-export const LeaderboardsPage = () => {
+interface RatingPageProps {
+	contestId: string
+}
+
+export const RatingPage: FC<RatingPageProps> = ({ contestId }) => {
 	const searchParams = useSearchParams()
 
 	const page = Number(searchParams.get('page')) || 1
 	const pageSize = Number(searchParams.get('pageSize')) || 20
 
 	const { data, isLoading, isSuccess } = useQuery({
-		queryKey: ['get-leaderboards-list', page, pageSize],
-		queryFn: () => userService.getGlobalRating(page, pageSize),
+		queryKey: ['get-contest-standings', contestId, page, pageSize],
+		queryFn: () =>
+			contestService.getContestStandings(contestId, page, pageSize),
 		refetchInterval: 5000,
 	})
 
 	return (
-		<div className="h-full flex flex-col gap-4 items-center">
-			{isLoading && <Loader className="animate-spin mx-auto" />}
+		<div className="h-full flex flex-col items-center">
+			{isLoading && <Loader className="animate-spin" />}
 			{isSuccess && (
 				<Card className="w-1/2 max-h-[800px]">
 					<CardHeader>
 						<CardTitle>Список лидеров</CardTitle>
 						<CardDescription>
-							Рейтинговая таблица участников за всё время.
+							Рейтинговая таблица участников контеста.
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="overflow-y-auto">
@@ -54,15 +60,19 @@ export const LeaderboardsPage = () => {
 								<TableRow>
 									<TableHead className="w-3">№</TableHead>
 									<TableHead>Имя пользователя</TableHead>
-									<TableHead>Рейтинг</TableHead>
+									<TableHead>Решенные задачи</TableHead>
+									<TableHead>Штраф</TableHead>
 								</TableRow>
 							</TableHeader>
 							<TableBody>
-								{data.contests.map((user, index) => (
-									<TableRow key={user.username}>
-										<TableCell>{index + 1}</TableCell>
-										<TableCell>{user.username}</TableCell>
-										<TableCell>{user.rating}</TableCell>
+								{data?.standings.map(standing => (
+									<TableRow key={standing.userId}>
+										<TableCell>
+											{standing.rank === 0 ? '-' : standing.rank}
+										</TableCell>
+										<TableCell>{standing.user.username}</TableCell>
+										<TableCell>{standing.problemsSolved}</TableCell>
+										<TableCell>{standing.penalty}</TableCell>
 									</TableRow>
 								))}
 							</TableBody>
@@ -84,12 +94,12 @@ export const LeaderboardsPage = () => {
 								<PaginationItem>
 									<PaginationNext
 										href={createPageURL(page + 1)}
-										aria-disabled={page === Math.ceil(data.total / pageSize)}
+										aria-disabled={page >= Math.ceil(data?.total / pageSize)}
 										tabIndex={
-											page === Math.ceil(data.total / pageSize) ? -1 : undefined
+											page >= Math.ceil(data?.total / pageSize) ? -1 : undefined
 										}
 										className={
-											page === Math.ceil(data.total / pageSize)
+											page >= Math.ceil(data?.total / pageSize)
 												? 'pointer-events-none opacity-50'
 												: undefined
 										}

@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import * as Docker from 'dockerode';
 import {
   ProgrammingLanguage,
+  Submission,
   SubmissionStatus,
   TestCase,
 } from '@prisma/client';
@@ -29,7 +30,7 @@ export class JudgeService {
   async judgeSubmission(submissionId: string) {
     const submission = await this.prismaService.submission.findUnique({
       where: { submissionId },
-      include: { problem: { include: { testCases: true } } },
+      include: { problem: { include: { testCases: true } }, contest: true },
     });
 
     if (!submission) {
@@ -102,6 +103,34 @@ export class JudgeService {
           },
         },
       });
+
+      if (verdict === 'ACCEPTED') {
+        const existingAccepted = await this.prismaService.submission.count({
+          where: {
+            contestId: submission.contestId,
+            problemId: submission.problemId,
+            userId: submission.userId,
+            verdict: 'ACCEPTED',
+            submissionTime: { lt: submission.submissionTime },
+          },
+        });
+
+        if (existingAccepted === 0) {
+          const problemPenalty = await this.calculateProblemPenalty(
+            submission,
+            submission.contest.startTime,
+          );
+
+          const ratingDelta = 1000 - problemPenalty;
+
+          await this.prismaService.user.update({
+            where: { userId: submission.userId },
+            data: { rating: { increment: ratingDelta } },
+          });
+
+          await this.recalculateStandings(submission.contestId);
+        }
+      }
     } catch {
       await this.prismaService.submission.update({
         where: { submissionId },
@@ -114,6 +143,76 @@ export class JudgeService {
         await this.docker.getVolume(volumeName).remove();
       }
     }
+  }
+
+  private async recalculateStandings(contestId: string) {
+    const contest = await this.prismaService.contest.findUnique({
+      where: { contestId },
+      include: {
+        submissions: {
+          where: {
+            verdict: SubmissionStatus.ACCEPTED,
+          },
+          orderBy: {
+            submissionTime: 'asc',
+          },
+        },
+      },
+    });
+
+    if (!contest) throw new NotFoundException('Контест не найден');
+
+    const participants = new Map<
+      string,
+      {
+        solved: Set<string>;
+        penalty: number;
+      }
+    >();
+
+    for (const submission of contest.submissions) {
+      const participant = participants.get(submission.userId) ?? {
+        solved: new Set(),
+        penalty: 0,
+      };
+
+      if (!participant.solved.has(submission.problemId)) {
+        const problemPenalty = await this.calculateProblemPenalty(
+          submission,
+          contest.startTime,
+        );
+
+        participant.penalty += problemPenalty;
+        participant.solved.add(submission.problemId);
+        participants.set(submission.userId, participant);
+      }
+    }
+
+    const sorted = Array.from(participants.entries()).sort((a, b) => {
+      const solvedDiff = b[1].solved.size - a[1].solved.size;
+
+      return solvedDiff !== 0 ? solvedDiff : a[1].penalty - b[1].penalty;
+    });
+
+    await this.prismaService.$transaction(
+      sorted.map((entry, index) =>
+        this.prismaService.contestStanding.upsert({
+          where: { contestId_userId: { contestId, userId: entry[0] } },
+          update: {
+            rank: index + 1,
+            problemsSolved: entry[1].solved.size,
+            penalty: entry[1].penalty,
+          },
+          create: {
+            contestId,
+            userId: entry[0],
+            rank: index + 1,
+            problemsSolved: entry[1].solved.size,
+            penalty: entry[1].penalty,
+          },
+        }),
+      ),
+    );
   }
 
   private async runTestInContainer(
@@ -235,6 +334,27 @@ export class JudgeService {
     }
 
     return result;
+  }
+
+  private async calculateProblemPenalty(
+    submission: Submission,
+    contestStartTime: Date,
+  ) {
+    const submissionTime = submission.submissionTime.getTime();
+    const startTime = contestStartTime.getTime();
+    const minutes = Math.floor((submissionTime - startTime) / 60000);
+
+    const failedAttempts = await this.prismaService.submission.count({
+      where: {
+        userId: submission.userId,
+        problemId: submission.problemId,
+        contestId: submission.contestId,
+        submissionTime: { lt: submission.submissionTime },
+        verdict: { not: SubmissionStatus.ACCEPTED },
+      },
+    });
+
+    return minutes + failedAttempts * 5;
   }
 
   private normalizeIO(str: string) {

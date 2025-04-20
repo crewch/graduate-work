@@ -1,6 +1,7 @@
 'use client'
 
 import {
+	Badge,
 	Card,
 	CardContent,
 	CardDescription,
@@ -76,7 +77,17 @@ export const ContestsPage = () => {
 								{data.contests.map(contest => (
 									<TableRow key={contest.contestId}>
 										<TableCell>{contest.title}</TableCell>
-										<TableCell>{contest.status}</TableCell>
+										<TableCell>
+											{contest.status === 'UPCOMING' && (
+												<Badge>{contest.status}</Badge>
+											)}
+											{contest.status === 'ONGOING' && (
+												<Badge variant={'positive'}>{contest.status}</Badge>
+											)}
+											{contest.status === 'FINISHED' && (
+												<Badge variant={'destructive'}>{contest.status}</Badge>
+											)}
+										</TableCell>
 										<TableCell>{contest.creator.username}</TableCell>
 										<TableCell>
 											{new Date(contest.startTime).toLocaleString()}

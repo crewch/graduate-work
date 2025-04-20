@@ -34,3 +34,12 @@ export interface ProblemResponseDto extends Problem {
 export interface GetContestProblemsResponseDto extends ContestProblem {
 	problem: ProblemResponseDto
 }
+
+export interface StandingsResponseDto extends ContestStanding {
+	user: User
+}
+
+export interface GetContestStandingsResponseDto {
+	total: number
+	standings: StandingsResponseDto[]
+}
