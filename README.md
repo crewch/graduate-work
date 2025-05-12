@@ -1,6 +1,6 @@
 ## Инструкция по запуску
 1) Установите `node`, `yarn` и `Docker`.
-2) Склонируйте репизиторий командой `git clone https://github.com/crewch/graduate-work.git` и откройте его в терминале.
+2) Склонируйте репозиторий командой `git clone https://github.com/crewch/graduate-work.git` и откройте его в терминале.
 3) Запустите Docker и команду `docker-compose up --build -d`.
 4) Перейдите в `src/frontend` и запустите команды по очереди `yarn`, `yarn build` и `yarn start`.
 5) Перейдите по [ссылке](http://localhost:3000).
