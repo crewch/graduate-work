@@ -9,7 +9,7 @@
 ![Архитектура дипломной работы drawio](https://github.com/user-attachments/assets/38010b3f-e064-4392-bc6c-75ac183d5648)
 
 ## Схема базы данных
-![БД](https://github.com/user-attachments/assets/969defee-9cec-4307-9a68-0e706b291c68)
+![БД light](https://github.com/user-attachments/assets/ab71fe5c-51e0-4b2e-b6c2-c91d1819ba6a)
 
 ## Результат работы
 ![Screenshot_1](https://github.com/user-attachments/assets/68cdbfa6-8700-43f5-ab4d-b580f74f872b)
